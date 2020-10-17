@@ -7,42 +7,56 @@ import 'package:my_first_app/view/chat_view.dart';
 import 'package:my_first_app/view/history_view.dart';
 import 'package:my_first_app/widget/bottom_navigationbar.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
-import 'package:my_first_app/view_model/setting_model.dart';
+import 'package:my_first_app/view_model/setting_view_model.dart';
+import 'package:my_first_app/view/splash_view.dart';
 
 class BaseView extends StatelessWidget {
 
   ///Constructor
-  BaseView(this._settingModel);
+  BaseView(this._settingViewModel);
 
-  BaseViewModel _model = BaseViewModel();
+  ///Variable
+  BaseViewModel _baseViewModel = BaseViewModel();
+  SettingViewModel _settingViewModel;
 
-  SettingModel _settingModel;
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => _model,
-      child: Consumer<BaseViewModel>(
-        builder: (_,model,__) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(model.appBarTitle),
-            ),
-
-            body:SafeArea(child: _pageList[model.selectedIndex]),
-
-            bottomNavigationBar: BottomNavigationBarItems(model, _settingModel),
-          );
-        },
-      ),
-    );
-  }
-
+  ///BottomNavigationBarの遷移ページリスト
   static List<Widget> _pageList = [
     HomeView(),
     ChatView(),
     HistoryView(),
     SettingView(),
   ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => _baseViewModel,
+      child: Consumer<BaseViewModel>(
+        builder: (_,model,__) {
+
+          if (_baseViewModel.isFinishSplash == false && _settingViewModel.isInitSplash == true) {
+            return SplashView(_baseViewModel,_settingViewModel);
+
+          } else {
+            return AnimatedOpacity(
+              duration: Duration(milliseconds: 500),
+              opacity: _settingViewModel.isInitSplash
+                  ? _baseViewModel.isStartFadeIn ? 1.0 : 0.0
+                  : 1.0,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text(model.appBarTitle),
+                ),
+
+                body:SafeArea(child: _pageList[model.selectedIndex]),
+
+                bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
 
 }

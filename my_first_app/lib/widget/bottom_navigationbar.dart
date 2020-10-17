@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
 import 'package:my_first_app/view_model/base_view_model.dart';
-import 'package:my_first_app/view_model/setting_model.dart';
+import 'package:my_first_app/view_model/setting_view_model.dart';
 
 class BottomNavigationBarItems extends StatelessWidget {
 
   ///Constructor
-  BottomNavigationBarItems(this._model, this._settingModel);
+  BottomNavigationBarItems(this._model, this._settingViewModel);
 
   BaseViewModel _model;
 
-  SettingModel _settingModel;
+  SettingViewModel _settingViewModel;
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        canvasColor: _settingModel.isDarkMode ? Colors.white24 : Colors.blue,
+        canvasColor: _settingViewModel.isDarkMode ? Colors.white24 : Colors.blue,
       ),
       child: BottomNavigationBar(
         items: const <BottomNavigationBarItem> [

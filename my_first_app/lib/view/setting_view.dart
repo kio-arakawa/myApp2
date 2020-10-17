@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/view_model/setting_model.dart';
+import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:provider/provider.dart';
 
 class SettingView extends StatelessWidget {
@@ -18,7 +18,7 @@ class SettingView extends StatelessWidget {
               //Columnの中央揃え
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Consumer<SettingModel>(
+                Consumer<SettingViewModel>(
                   builder: (_,model,__) {
                     return SwitchListTile(
                       secondary: Icon(
