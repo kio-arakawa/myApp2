@@ -55,7 +55,7 @@ class ChatView extends StatelessWidget {
                     color: Colors.grey,
                     shape: StadiumBorder(),
                     onPressed: () {},
-                    child: Text("登録"),
+                    child: Text("Register"),
                   ),
                 ),
               ],
