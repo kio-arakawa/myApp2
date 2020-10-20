@@ -150,6 +150,7 @@ class LoginView extends StatelessWidget {
                                         FlatButton(
                                           child: Text('Go!'),
                                           onPressed: () {
+                                            //Todo: Widgetを作ってFutureBuilderでCircleIndicatorかContainerを返すようにする
                                             Navigator.of(context).pushReplacementNamed('/base');
                                           },
                                         ),
@@ -158,6 +159,8 @@ class LoginView extends StatelessWidget {
                                   }
                               );
                             } else {
+                              Container();
+                              //Todo: Widgetを作ってFutureBuilderでCircleIndicatorかダイアログを返すようにする
                               Navigator.of(context).pushReplacementNamed('/base');
                             }
                           },
