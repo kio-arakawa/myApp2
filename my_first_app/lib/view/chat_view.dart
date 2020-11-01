@@ -8,10 +8,10 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textController = new TextEditingController();
+    ///MediaQueryで端末のサイズを取得する位置はBaseViewでリビルドが走らないとこですべき、またはBaseViewModel
     final Size size = MediaQuery.of(context).size;
     final double sizeHeight = size.height;
     final double sizeWidth = size.width;
-
     return Stack(
       children: <Widget>[
 
@@ -55,7 +55,7 @@ class ChatView extends StatelessWidget {
                     color: Colors.grey,
                     shape: StadiumBorder(),
                     onPressed: () {},
-                    child: Text("Register"),
+                    child: Text("送信"),
                   ),
                 ),
               ],

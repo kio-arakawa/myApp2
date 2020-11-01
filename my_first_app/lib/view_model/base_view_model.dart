@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:my_first_app/my_enum/page_name.dart';
+
 class BaseViewModel extends ChangeNotifier{
 
   ///Constructor
@@ -28,10 +30,29 @@ class BaseViewModel extends ChangeNotifier{
   //BaseViewフェードインフラグ
   bool isStartFadeIn = false;
 
+  //今どのページにいるかのフラグ（初期値HOME）
+  PageName _pageName = PageName.HOME;
+
   ///BottomNavigationBarでタップされたindexを元にAppBarのタイトル変更するAPI
   void onItemTapped(int index) {
     selectedIndex = index;
     setAppBarTitle(index);
+    switch(index) {
+      case 0:
+        setPageName(PageName.HOME);
+        break;
+      case 1:
+        setPageName(PageName.CHAT);
+        break;
+      case 2:
+        setPageName(PageName.HISTORY);
+        break;
+      case 3:
+        setPageName(PageName.SETTING);
+        break;
+      default:
+        setPageName(PageName.HOME);
+    }
     notifyListeners();
   }
 
@@ -90,6 +111,16 @@ class BaseViewModel extends ChangeNotifier{
   void _startBase() {
     isStartFadeIn = true;
     notifyListeners();
+  }
+
+  ///set PageName
+  void setPageName(PageName name) {
+    _pageName = name;
+  }
+
+  ///get PageName
+  PageName getPageName() {
+    return _pageName;
   }
 
 }

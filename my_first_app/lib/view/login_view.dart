@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:my_first_app/view_model/setting_view_model.dart';
-import 'package:my_first_app/animation_model.dart';
+import 'package:my_first_app/model/animation_model.dart';
 import 'package:my_first_app/widget/background_animation.dart';
 import 'package:provider/provider.dart';
 
@@ -151,6 +151,7 @@ class LoginView extends StatelessWidget {
                                           child: Text('Go!'),
                                           onPressed: () {
                                             //Todo: Widgetを作ってFutureBuilderでCircleIndicatorかContainerを返すようにする
+                                            //Todo: 正常にアカウント作成できたらページ遷移、できなかったらエラーダイアログを出す
                                             Navigator.of(context).pushReplacementNamed('/base');
                                           },
                                         ),
@@ -159,6 +160,7 @@ class LoginView extends StatelessWidget {
                                   }
                               );
                             } else {
+                              ///ログイン時
                               Container();
                               //Todo: Widgetを作ってFutureBuilderでCircleIndicatorかダイアログを返すようにする
                               Navigator.of(context).pushReplacementNamed('/base');

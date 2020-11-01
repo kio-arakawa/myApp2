@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/view/home_view.dart';
@@ -46,6 +47,9 @@ class BaseView extends StatelessWidget {
               child: Scaffold(
                 appBar: AppBar(
                   title: Text(model.appBarTitle),
+                  leading: _baseViewModel.getPageName() == PageName.SETTING
+                    ? null
+                    : Container(),
                 ),
 
                 body:SafeArea(child: _pageList[model.selectedIndex]),
