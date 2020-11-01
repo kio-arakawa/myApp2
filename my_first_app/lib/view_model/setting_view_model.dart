@@ -18,6 +18,9 @@ class SettingViewModel extends ChangeNotifier {
   //SplashView用初回のみ起動フラグ
   bool isInitSplash = true;
 
+  //DebugModeフラグ
+  bool isDebugMode = false;
+
   ///DarkMode切替時テーマビルドAPI
   ThemeData buildTheme() => isDarkMode ? ThemeData.dark() : ThemeData.light();
 //  ? ThemeData(primaryColorBrightness: Brightness.dark)
@@ -26,6 +29,13 @@ class SettingViewModel extends ChangeNotifier {
   ///DarkModeフラグ変更API
   void changeDarkMode(bool value) {
     isDarkMode = value;
+    isInitSplash = false;
+    notifyListeners();
+  }
+
+  ///DebugModeフラグ変更API
+  void changeDebugMode(bool value) {
+    isDebugMode = value;
     isInitSplash = false;
     notifyListeners();
   }

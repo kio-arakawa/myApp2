@@ -30,6 +30,13 @@ class BaseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _settingViewModel.isDebugMode
+        ? _debugBuilder()
+        : _normalBuilder();
+  }
+
+  ///本当のbuildメソッドの中身(Debug中は基本的にOFFにして下のbuildメソッドを使用する)
+  Widget _normalBuilder() {
     return ChangeNotifierProvider(
       create: (context) => _baseViewModel,
       child: Consumer<BaseViewModel>(
@@ -48,8 +55,8 @@ class BaseView extends StatelessWidget {
                 appBar: AppBar(
                   title: Text(model.appBarTitle),
                   leading: _baseViewModel.getPageName() == PageName.SETTING
-                    ? null
-                    : Container(),
+                      ? null
+                      : Container(),
                 ),
 
                 body:SafeArea(child: _pageList[model.selectedIndex]),
@@ -58,6 +65,29 @@ class BaseView extends StatelessWidget {
               ),
             );
           }
+        },
+      ),
+    );
+  }
+
+  /// Debug用のbuildメソッドの中身(リビルドするとSplashViewのアニメーションがうまく動作せずいちいちホットリスタートしなければならないため)
+  Widget _debugBuilder() {
+    return ChangeNotifierProvider(
+      create: (context) => _baseViewModel,
+      child: Consumer<BaseViewModel>(
+        builder: (_,model,__) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(model.appBarTitle),
+              leading: _baseViewModel.getPageName() == PageName.SETTING
+                  ? null
+                  : Container(),
+            ),
+
+            body:SafeArea(child: _pageList[model.selectedIndex]),
+
+            bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
+          );
         },
       ),
     );
