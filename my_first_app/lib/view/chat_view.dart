@@ -19,9 +19,10 @@ class ChatView extends StatelessWidget {
       child: Consumer<ChatViewModel>(
         builder: (_,model,__) {
           return Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-            ),
+            // 高さを指定しないと、タイムラインが空白の時テキストボックス＆送信ボタンWidgetができる限り小さくなろうとする
+            // すなわち、Positionedでbottomを0指定していても無効化される
+            height: sizeHeight,
+            margin: EdgeInsets.only(top: 20),
             child: Stack(
               children: <Widget>[
 
@@ -32,9 +33,23 @@ class ChatView extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: model.listIndex,
                   itemBuilder: (BuildContext context, int i) {
-                    return Card(
-                      child: ListTile(
-                        title: Text('${model.registerStrings}'),
+                    return Container(
+                      key: model.key,
+                      decoration: BoxDecoration(
+                        //角丸にする
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        color: Colors.lightGreen,
+                      ),
+                      margin: EdgeInsets.only(
+                        bottom: 10,
+                        left: model.isMyRegisterString ? sizeWidth * 0.05 : 0,
+                        right: model.isMyRegisterString ? sizeWidth * 0.01 : 0,
+                      ),
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        '${model.registerStrings}',
+                        //テキストは右寄せ
+                        textAlign: TextAlign.start,
                       ),
                     );
                   },
@@ -42,7 +57,7 @@ class ChatView extends StatelessWidget {
 
                 ///テキストボックスと登録ボタン
                 Positioned(
-                  height: sizeHeight * 0.08,  ///8%
+                  height: sizeHeight * 0.075,  ///8%
                   left: 0.0,
                   right: 0.0,
                   bottom: 0.0,
@@ -59,7 +74,7 @@ class ChatView extends StatelessWidget {
                           width: sizeWidth * 0.65,
                           left: sizeWidth * 0.07,
                           child: Center(
-                            child: TextFormField(
+                            child: TextField(
                               controller: textController,
                             ),
                           ),
