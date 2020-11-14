@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:my_first_app/view/home_view.dart';
 import 'package:my_first_app/view/setting_view.dart';
-import 'package:my_first_app/view/chat_view.dart';
+import 'package:my_first_app/view/diary_view.dart';
 import 'package:my_first_app/view/history_view.dart';
 import 'package:my_first_app/widget/bottom_navigationbar.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
@@ -23,7 +23,7 @@ class BaseView extends StatelessWidget {
   ///BottomNavigationBarの遷移ページリスト
   static List<Widget> _pageList = [
     HomeView(),
-    ChatView(),
+    DiaryView(),
     HistoryView(),
     SettingView(),
   ];

@@ -7,13 +7,18 @@ class HistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        //Columnの中央揃え
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+    return Container(
+      height: 900,
+      child: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            //Columnの中央揃え
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
 
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
