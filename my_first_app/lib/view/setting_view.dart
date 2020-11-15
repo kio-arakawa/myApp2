@@ -18,7 +18,10 @@ class SettingView extends StatelessWidget {
               children: <Widget>[
 
                 _createSectionContainer(
-                  section: _createSectionTitle('Developer Options'),
+                  section: _createSectionTitle(
+                    model: model,
+                    title: 'Developer Options',
+                  ),
                   tiles: [
                     _createListTile(
                       model: model,
@@ -37,7 +40,7 @@ class SettingView extends StatelessWidget {
                       isSwitchListTile: true,
                       icon: Icon(
                         Icons.bug_report,
-                        color: model.isDarkMode ? Colors.yellow : Colors.black,
+                        color: model.isDebugMode ? Colors.green : Colors.black,
                       ),
                       text: 'Debug Mode',
                       value: model.isDebugMode,
@@ -47,25 +50,54 @@ class SettingView extends StatelessWidget {
                 ),
 
                 _createSectionContainer(
-                  section: _createSectionTitle('Profile Setting'),
+                  section: _createSectionTitle(
+                    model: model,
+                    title: 'User Setting',
+                  ),
                   tiles: [
 
                     _createListTile(
                       model: model,
                       isSwitchListTile: false,
                       icon: Icon(
-                        Icons.face,
-                        color: model.isDarkMode ? Colors.yellow : Colors.black,
-                      ),
-                      subIcon: Icon(
-                        Icons.chevron_right,
-                        color: model.isDarkMode ? Colors.yellow : Colors.black,
+                        Icons.assignment_ind,
+                        color: model.isDarkMode ? Colors.black : Colors.black,
                       ),
                       text: 'Setting Profile',
                       function: null,
                     ),
 
+                    _createListTile(
+                      model: model,
+                      isSwitchListTile: false,
+                      icon: Icon(
+                        Icons.autorenew,
+                        color: model.isDarkMode ? Colors.black : Colors.black,
+                      ),
+                      text: 'Diary Information Initialization',
+                      function: null,
+                    ),
+
                   ],
+                ),
+
+                _createSectionContainer(
+                  section: _createSectionTitle(
+                    model: model,
+                    title: 'Other',
+                  ),
+                  tiles: [
+                    _createListTile(
+                      model: model,
+                      isSwitchListTile: false,
+                      icon: Icon(
+                        Icons.help,
+                        color: model.isDarkMode ? Colors.black : Colors.black,
+                      ),
+                      text: 'Help',
+                      function: null,
+                    ),
+                  ]
                 ),
 
               ],
@@ -110,7 +142,7 @@ class SettingView extends StatelessWidget {
   }
 
   ///SectionTitleを生成
-  Widget _createSectionTitle(String title) {
+  Widget _createSectionTitle({SettingViewModel model,String title}) {
     return Container(
         margin: EdgeInsets.only(
           left: 8.0,
@@ -122,7 +154,8 @@ class SettingView extends StatelessWidget {
           style: TextStyle(
             fontStyle: FontStyle.italic,
             fontWeight: FontWeight.bold,
-            fontSize: 26,
+            fontSize: 20,
+            color: model.isDarkMode ? Colors.black : Colors.black,
 //          decoration: TextDecoration.underline,
 //          decorationStyle: TextDecorationStyle.dotted,
           ),
@@ -152,7 +185,7 @@ class SettingView extends StatelessWidget {
           color: Colors.white70,
           child: SwitchListTile(
             secondary: FittedBox(child: icon),
-            activeColor: Colors.yellow,
+            activeColor: Colors.orange,
             activeTrackColor: Colors.grey,
             inactiveTrackColor: Colors.grey,
             value: value,
@@ -160,7 +193,8 @@ class SettingView extends StatelessWidget {
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                color: model.isDarkMode ? Colors.black : Colors.black,
+                fontSize: 18,
               ),
             ),
             onChanged: function,
@@ -179,12 +213,18 @@ class SettingView extends StatelessWidget {
           color: Colors.white70,
           child: ListTile(
             leading: FittedBox(child: icon),
-            trailing: FittedBox(child: subIcon),
+            trailing: FittedBox(
+              child: Icon(
+                Icons.chevron_right,
+                color: model.isDarkMode ? Colors.black : Colors.black,
+            ),
+            ),
             title: Text(
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                color: model.isDarkMode ? Colors.black : Colors.black,
+                fontSize: 18,
               ),
             ),
             onTap: function,

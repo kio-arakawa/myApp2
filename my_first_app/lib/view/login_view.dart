@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:my_first_app/model/user_info.dart';
 import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:my_first_app/model/animation_model.dart';
 import 'package:my_first_app/widget/background_animation.dart';
-import 'package:provider/provider.dart';
 
 class LoginView extends StatelessWidget {
 
   ///Constructor
-  LoginView(this._settingViewModel);
+  LoginView(this._settingViewModel, this._userInfo);
 
   ///Variable
   SettingViewModel _settingViewModel;
+  UserInfo _userInfo;
   AnimationModel _animationModel = AnimationModel();
   //初回登録かどうかのフラグ
   bool isFirstLogin = true;
