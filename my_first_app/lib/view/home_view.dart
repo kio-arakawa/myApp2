@@ -9,6 +9,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('homeViewBuild');
     return ChangeNotifierProvider<HomeViewModel>(
       create: (context) => HomeViewModel(),
       child: Container(
