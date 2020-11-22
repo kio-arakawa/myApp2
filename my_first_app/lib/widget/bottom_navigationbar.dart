@@ -25,11 +25,11 @@ class BottomNavigationBarItems extends StatelessWidget {
             title: Text('Home'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            title: Text('Chat'),
+            icon: Icon(Icons.edit),
+            title: Text('Diary'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
+            icon: Icon(Icons.import_contacts),
             title: Text('History'),
           ),
           BottomNavigationBarItem(

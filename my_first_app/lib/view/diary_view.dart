@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/view_model/chat_view_model.dart';
+import 'package:my_first_app/view_model/diary_view_model.dart';
 import 'package:provider/provider.dart';
 
-class ChatView extends StatelessWidget {
+class DiaryView extends StatelessWidget {
 
   ///Constructor
-  ChatView({Key key}) : super(key: key);
+  DiaryView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class ChatView extends StatelessWidget {
                           width: sizeWidth * 0.65,
                           left: sizeWidth * 0.07,
                           child: Center(
-                            child: TextField(
+                            child: TextFormField(
                               controller: textController,
                             ),
                           ),
@@ -92,7 +92,7 @@ class ChatView extends StatelessWidget {
                             onPressed: () {
                               model.onTapRegisterButton(textController.value.text);
                             },
-                            child: Text('送信'),
+                            child: Text('記録'),
                           ),
                         ),
                       ],
