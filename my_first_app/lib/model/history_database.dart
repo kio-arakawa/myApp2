@@ -4,6 +4,17 @@ import 'package:sqflite/sqflite.dart';
 
 class HistoryDataBase extends DataBaseProvider {
 
+  static HistoryDataBase _historyDataBase;
+
+  HistoryDataBase._();
+
+  factory HistoryDataBase() {
+    if (_historyDataBase == null) {
+      _historyDataBase = HistoryDataBase._();
+    }
+    return _historyDataBase;
+  }
+
   @override
   String get databaseName => 'history_database.db';
 
@@ -17,7 +28,7 @@ class HistoryDataBase extends DataBaseProvider {
     """
       CREATE TABLE history(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        time INTEGER,
+        time BLOB,
         tension TEXT,
         text TEXT,
       )

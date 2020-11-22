@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:my_first_app/model/history_database.dart';
 
 class HomeViewModel extends ChangeNotifier{
 
@@ -18,6 +19,9 @@ class HomeViewModel extends ChangeNotifier{
   String _dateTime;
   //曜日情報
   String _dayOfWeek;
+
+  //データベース
+  HistoryDataBase _historyDataBase = HistoryDataBase();
 
   //日時情報取得API
   String getDateTime() {

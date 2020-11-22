@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/model/history_database.dart';
 
 class SettingViewModel extends ChangeNotifier {
 
@@ -20,6 +21,9 @@ class SettingViewModel extends ChangeNotifier {
 
   //DebugModeフラグ
   bool isDebugMode = false;
+
+  //データベース
+  HistoryDataBase _historyDataBase = HistoryDataBase();
 
   ///DarkMode切替時テーマビルドAPI
   ThemeData buildTheme() => isDarkMode ? ThemeData.dark() : ThemeData.light();

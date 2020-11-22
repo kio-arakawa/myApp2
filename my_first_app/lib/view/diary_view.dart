@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/my_enum/data_base_state.dart';
+import 'package:my_first_app/view_model/base_view_model.dart';
 import 'package:my_first_app/view_model/diary_view_model.dart';
 import 'package:provider/provider.dart';
 
 class DiaryView extends StatelessWidget {
+
+  BaseViewModel _baseViewModel = BaseViewModel();
 
   ///Constructor
   DiaryView({Key key}) : super(key: key);
@@ -90,6 +94,7 @@ class DiaryView extends StatelessWidget {
                             color: Colors.grey,
                             shape: StadiumBorder(),
                             onPressed: () {
+                              _baseViewModel.setState(DataBaseState.CONNECTING);
                               model.onTapRegisterButton(textController.value.text);
                             },
                             child: Text('記録'),
