@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/view_model/home_view_model.dart';
 import 'package:provider/provider.dart';
+
+import 'package:my_first_app/view_model/home_view_model.dart';
 
 class HomeView extends StatelessWidget {
 
@@ -10,77 +11,74 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('homeViewBuild');
-    return ChangeNotifierProvider<HomeViewModel>(
-      create: (context) => HomeViewModel(),
-      child: Container(
-        height: 900,
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              //Columnの中央揃え
+    return Container(
+      height: 900,
+      child: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            //Columnの中央揃え
 //        mainAxisSize: MainAxisSize.min,
-              //上端揃え
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
+            //上端揃え
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
 
-                ///日付表示
-                Consumer<HomeViewModel>(
-                  builder: (_,model,__) {
-                    return _myCard(
-                      isCard: false,
+              ///日付表示
+              Consumer<HomeViewModel>(
+                builder: (_,model,__) {
+                  return _myCard(
+                    isCard: false,
 //                      width: 400.0,
 //                      height: 80.0,
-                      cardColor: Colors.deepOrangeAccent,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
+                    cardColor: Colors.deepOrangeAccent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
 
-                          Icon(
-                            Icons.access_alarms,
-                          ),
+                        Icon(
+                          Icons.access_alarms,
+                        ),
 
-                          Text(
-                            '  ${model.getDateTime()}',
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-
-                ///プロフィールカード
-                _myCard(
-                  isCard: true,
-                  width: 400.0,
-                  height: 150.0,
-                  cardColor: null,
-                  child: Row(
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundImage: null,
-                        child: FittedBox(
-                          child: Text(
-                            'User Image',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
+                        Text(
+                          '  ${model.getDateTime()}',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
                           ),
                         ),
-                        minRadius: 40.0,
-                        maxRadius: 60.0,
-                        backgroundColor: Colors.grey,
-                      ),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                  );
+                },
+              ),
 
-              ],
-            ),
+              ///プロフィールカード
+              _myCard(
+                isCard: true,
+                width: 400.0,
+                height: 150.0,
+                cardColor: null,
+                child: Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundImage: null,
+                      child: FittedBox(
+                        child: Text(
+                          'User Image',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      minRadius: 40.0,
+                      maxRadius: 60.0,
+                      backgroundColor: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+
+            ],
           ),
         ),
       ),

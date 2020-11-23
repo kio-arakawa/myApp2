@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
+
+import 'package:my_first_app/view_model/change_notifier_model.dart';
 import 'package:my_first_app/model/history_database.dart';
 
-class HomeViewModel extends ChangeNotifier{
+class HomeViewModel extends ChangeNotifierModel{
 
   ///Constructor
   //private constructor

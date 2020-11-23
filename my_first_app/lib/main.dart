@@ -3,10 +3,26 @@ import 'package:provider/provider.dart';
 
 import 'package:my_first_app/view/login_view.dart';
 import 'package:my_first_app/view/base_view.dart';
+import 'package:my_first_app/view_model/base_view_model.dart';
+import 'package:my_first_app/view_model/diary_view_model.dart';
+import 'package:my_first_app/view_model/home_view_model.dart';
 import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:my_first_app/model/user_info.dart';
+import 'package:my_first_app/model/data_base_model.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => BaseViewModel()),
+        ChangeNotifierProvider(create: (context) => SettingViewModel()),
+        ChangeNotifierProvider(create: (context) => HomeViewModel()),
+        ChangeNotifierProvider(create: (context) => ChatViewModel()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
 
@@ -18,8 +34,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ///Create UserInfo Repository
     _userInfoModel = UserInfo();
-    return ChangeNotifierProvider(
-      create: (_) => SettingViewModel(),
+    return Provider<DataBaseModel>(
+      create: (context) => DataBaseModel(),
+      dispose: (context, databaseModel) => databaseModel.dispose(),
       child: Consumer<SettingViewModel>(
         builder: (_,model,__) {
           return MaterialApp(

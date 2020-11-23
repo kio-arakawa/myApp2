@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:provider/provider.dart';
+
+import 'package:my_first_app/view_model/setting_view_model.dart';
 
 class SettingView extends StatelessWidget {
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/my_enum/data_base_state.dart';
+import 'package:provider/provider.dart';
 
+import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
 import 'package:my_first_app/view_model/setting_view_model.dart';
-import 'package:provider/provider.dart';
 
 class BottomNavigationBarItems extends StatelessWidget {
 

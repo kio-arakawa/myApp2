@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
+import 'package:my_first_app/view_model/change_notifier_model.dart';
 import 'package:my_first_app/model/history_database.dart';
 
-class SettingViewModel extends ChangeNotifier {
+class SettingViewModel extends ChangeNotifierModel {
 
   ///Constructor
   //private constructor

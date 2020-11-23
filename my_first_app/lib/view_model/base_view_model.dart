@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:my_first_app/model/history_database.dart';
-import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'dart:async';
 
 import 'package:my_first_app/my_enum/page_name.dart';
+import 'package:my_first_app/view_model/change_notifier_model.dart';
+import 'package:my_first_app/model/history_database.dart';
 
-class BaseViewModel extends ChangeNotifier{
+class BaseViewModel extends ChangeNotifierModel{
 
   ///Constructor
   //private constructor
@@ -38,20 +37,6 @@ class BaseViewModel extends ChangeNotifier{
 
   //今どのページにいるかのフラグ（初期値HOME）
   static PageName _pageName;
-
-  //HistoryDataBaseの通信状態(初期値STOP)
-  DataBaseState _dataBaseState = DataBaseState.STOP;
-
-  //通信状態のGETメソッド
-  DataBaseState get getState => _dataBaseState;
-
-  //通信状態変更
-  void setState(DataBaseState state) {
-    _dataBaseState = state;
-  }
-
-  //データベース
-  HistoryDataBase _historyDataBase = HistoryDataBase();
 
   ///BottomNavigationBarでタップされたindexを元にAppBarのタイトル変更するAPI
   void onItemTapped(int index) {
