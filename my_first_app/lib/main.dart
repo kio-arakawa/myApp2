@@ -9,6 +9,7 @@ import 'package:my_first_app/view_model/home_view_model.dart';
 import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:my_first_app/model/user_info.dart';
 import 'package:my_first_app/model/data_base_model.dart';
+import 'package:my_first_app/dimens/dimens_manager.dart';
 
 void main() {
   runApp(
@@ -19,7 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => HomeViewModel()),
         ChangeNotifierProvider(create: (context) => ChatViewModel()),
       ],
-      child: MyApp(),
+      child: MyApp(UserInfo()),
     ),
   );
 }
@@ -28,12 +29,17 @@ class MyApp extends StatelessWidget {
 
   ///Variable
   //ユーザー情報のリポジトリmodel
-  UserInfo _userInfoModel;
+  final UserInfo _userInfoModel;
+
+  MyApp(this._userInfoModel) {
+    ///DimensManager
+    DimensManager();
+    debugPrint('initialDimensManager');
+  }
 
   @override
   Widget build(BuildContext context) {
-    ///Create UserInfo Repository
-    _userInfoModel = UserInfo();
+    debugPrint('MyAppBuild');
     return Provider<DataBaseModel>(
       create: (context) => DataBaseModel(),
       dispose: (context, databaseModel) => databaseModel.dispose(),
@@ -51,5 +57,7 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+
+
 
 }

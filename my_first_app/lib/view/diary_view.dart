@@ -13,6 +13,7 @@ class DiaryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('diaryViewBuild');
     final textController = new TextEditingController();
     ///MediaQueryで端末のサイズを取得する位置はBaseViewでリビルドが走らないとこですべき、またはBaseViewModel
     final Size size = MediaQuery.of(context).size;

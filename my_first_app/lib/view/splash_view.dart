@@ -67,6 +67,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('splashViewBuild');
     return AnimatedOpacity(
       duration: Duration(milliseconds: 1000),
       opacity: widget._baseViewModel.isStartFadeOut ? 0.0 : 1.0,

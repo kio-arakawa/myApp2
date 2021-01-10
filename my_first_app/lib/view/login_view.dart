@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:my_first_app/widget/background_animation.dart';
+import 'package:my_first_app/view/widget/background_animation.dart';
 import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:my_first_app/model/user_info.dart';
 import 'package:my_first_app/model/animation_model.dart';
@@ -28,6 +28,7 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('loginViewBuild');
     return ChangeNotifierProvider(
       create: (_) => _animationModel,
       child: Scaffold(

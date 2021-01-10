@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/my_enum/page_name.dart';
-import 'package:my_first_app/widget/bottom_navigationbar.dart';
+import 'package:my_first_app/view/widget/bottom_navigationbar.dart';
 import 'package:my_first_app/view/home_view.dart';
 import 'package:my_first_app/view/splash_view.dart';
 import 'package:my_first_app/view/setting_view.dart';
@@ -32,6 +32,7 @@ class BaseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('baseViewBuild');
     return _settingViewModel.isDebugMode
         ? _debugBuilder()
         : _normalBuilder();

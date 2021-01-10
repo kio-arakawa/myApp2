@@ -10,6 +10,7 @@ class SettingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('settingViewBuild');
     return Container(
       height: 900,
       child: SingleChildScrollView(

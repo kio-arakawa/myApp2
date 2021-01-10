@@ -7,6 +7,7 @@ class HistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('historyViewBuild');
     return Container(
       height: 900,
       child: SingleChildScrollView(
