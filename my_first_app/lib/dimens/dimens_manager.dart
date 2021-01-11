@@ -13,7 +13,7 @@ class DimensManager {
 
   factory DimensManager() {
     // nullなら左辺の値を代入
-    _instance ??= instance;
+    _instance ??= DimensManager._();
     return _instance;
   }
 
@@ -26,7 +26,7 @@ class DimensManager {
     _dimensHome ??= DimensHome();
   }
 
-  void calculatorRatio<T>() {
+  void initialDimens<T>() {
     switch(T) {
       case HomeView:
         _dimensHome ??= DimensHome();

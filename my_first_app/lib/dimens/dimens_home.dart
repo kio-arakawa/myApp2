@@ -9,7 +9,7 @@ class DimensHome extends DimensBase {
   DimensHome._();
 
   factory DimensHome() {
-    _instance ??= instance;
+    _instance ??= DimensHome._();
     return _instance;
   }
 

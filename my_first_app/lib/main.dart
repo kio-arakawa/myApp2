@@ -37,9 +37,21 @@ class MyApp extends StatelessWidget {
     debugPrint('initialDimensManager');
   }
 
+  bool _getAppTheme(BuildContext context) {
+    // OSのダークモード設定判定
+    //Todo: SharedPrefで初回アプリ起動時以降、Theme設定を記憶しておく
+    final Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
+    if (platformBrightness == Brightness.dark) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('MyAppBuild');
+    final isDarkMode = _getAppTheme(context);
     return Provider<DataBaseModel>(
       create: (context) => DataBaseModel(),
       dispose: (context, databaseModel) => databaseModel.dispose(),
@@ -47,7 +59,7 @@ class MyApp extends StatelessWidget {
         builder: (_,model,__) {
           return MaterialApp(
             title: 'MyApp',
-            theme: model.buildTheme(),
+            theme: isDarkMode ? ThemeData.dark() : model.buildTheme(),
             routes: <String, WidgetBuilder> {
               '/': (BuildContext context) => new LoginView(model, _userInfoModel),
               '/base': (BuildContext context) => new BaseView(model, _userInfoModel),
@@ -57,7 +69,5 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-
-
 
 }

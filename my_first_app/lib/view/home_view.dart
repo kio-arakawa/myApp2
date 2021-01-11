@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/dimens/dimens_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/view_model/home_view_model.dart';
@@ -8,11 +9,18 @@ class HomeView extends StatelessWidget {
   ///Constructor
   HomeView({Key key}) : super(key: key);
 
+  void _initializer() {
+    DimensManager.instance.initialDimens<HomeView>();
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('homeViewBuild');
+    //初期設定
+    _initializer();
     return Container(
-      height: 900,
+//      height: DimensManager.dimensHomeSize.fullHeightSafeArea,
+//      width: DimensManager.dimensHomeSize.fullWidthSafeArea,
       child: SingleChildScrollView(
         child: Center(
           child: Column(
