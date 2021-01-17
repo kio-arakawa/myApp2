@@ -3,9 +3,8 @@ import 'package:sqflite/sqflite.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
-import 'package:my_first_app/model/history_database.dart';
 
-class ChatViewModel extends ChangeNotifierModel{
+class ChatViewModel extends ChangeNotifierModel {
 
   ///Constructor
   ChatViewModel._();
@@ -61,7 +60,6 @@ class ChatViewModel extends ChangeNotifierModel{
 //      notifyListeners();
 //    }
 
-      text = value;
       //リスト(Container)の数増やす
       listIndex++;
       _createValueKey(listIndex);
@@ -69,8 +67,13 @@ class ChatViewModel extends ChangeNotifierModel{
       registerStrings = value;
       //自分で登録したからTrue
       isMyRegisterString = true;
+      //データベースID登録
+//      setId(listIndex);
+      //テンション登録
+//      setTension('TBD');
       //データベース登録
-//      _addHistory();
+      addHistory('TBD', value);
+//      debugPrint('登録内容${getHistory()}');
       //変更通知
       notifyListeners();
   }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
-import 'package:my_first_app/model/history_database.dart';
 
 class BaseViewModel extends ChangeNotifierModel{
 
@@ -69,10 +68,10 @@ class BaseViewModel extends ChangeNotifierModel{
         this.appBarTitle = Constants.homeViewTitle;
         break;
       case 1:
-        this.appBarTitle = Constants.chatViewTitle;
+        this.appBarTitle = Constants.diaryViewTitle;
         break;
       case 2:
-        this.appBarTitle = Constants.diaryViewTitle;
+        this.appBarTitle = Constants.historyViewTitle;
         break;
       case 3:
         this.appBarTitle = Constants.settingViewTitle;
