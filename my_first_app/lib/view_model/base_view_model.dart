@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
 import 'package:my_first_app/model/history_database.dart';
@@ -41,40 +42,40 @@ class BaseViewModel extends ChangeNotifierModel{
   ///BottomNavigationBarでタップされたindexを元にAppBarのタイトル変更するAPI
   void onItemTapped(int index) {
     selectedIndex = index;
-    setAppBarTitle(index);
+    _setAppBarTitle(index);
     switch(index) {
       case 0:
-        setPageName(PageName.HOME);
+        _setPageName(PageName.HOME);
         break;
       case 1:
-        setPageName(PageName.CHAT);
+        _setPageName(PageName.CHAT);
         break;
       case 2:
-        setPageName(PageName.HISTORY);
+        _setPageName(PageName.HISTORY);
         break;
       case 3:
-        setPageName(PageName.SETTING);
+        _setPageName(PageName.SETTING);
         break;
       default:
-        setPageName(PageName.HOME);
+        _setPageName(PageName.HOME);
     }
     notifyListeners();
   }
 
   ///AppBarのタイトルを変更するAPI
-  void setAppBarTitle(int index) {
+  void _setAppBarTitle(int index) {
     switch(index) {
       case 0:
-        this.appBarTitle = 'Home';
+        this.appBarTitle = Constants.homeViewTitle;
         break;
       case 1:
-        this.appBarTitle = 'Chat';
+        this.appBarTitle = Constants.chatViewTitle;
         break;
       case 2:
-        this.appBarTitle = 'History';
+        this.appBarTitle = Constants.diaryViewTitle;
         break;
       case 3:
-        this.appBarTitle = 'Setting';
+        this.appBarTitle = Constants.settingViewTitle;
         break;
     }
   }
@@ -119,7 +120,7 @@ class BaseViewModel extends ChangeNotifierModel{
   }
 
   ///set PageName
-  void setPageName(PageName name) {
+  void _setPageName(PageName name) {
     _pageName = name;
   }
 

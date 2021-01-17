@@ -20,8 +20,8 @@ class DimensBase {
     paddingBottom = MediaQueryData.fromWindow(window).padding.bottom;
     fullHeightSafeArea = fullHeight - (paddingTop + paddingBottom);
     fullHeightSafeArea = fullWidth;
-    headerHeight = fullHeightSafeArea * 0.13;
-    bottomNavigationBarHeight = fullHeightSafeArea * 0.15;
+    headerHeight = (fullHeightSafeArea * 0.05) + paddingTop;
+    bottomNavigationBarHeight = (fullHeightSafeArea * 0.15) + paddingBottom;
     print('fullHeight:$fullHeight, fullWidth:$fullWidth, paddingTop:$paddingTop, paddingBottom:$paddingBottom, '
         'fullHeightSafeArea:$fullHeightSafeArea, fullWidthSafeArea:$fullWidthSafeArea');
 

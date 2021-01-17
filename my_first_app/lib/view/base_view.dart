@@ -52,60 +52,23 @@ class BaseView extends StatelessWidget {
 
   ///本当のbuildメソッドの中身(Debug中は基本的にOFFにして下のbuildメソッドを使用する)
   Widget _normalBuilder() {
-    return SafeArea(
-      child: Container(
-//        height: DimensManager.dimensHomeSize.fullHeightSafeArea,
-//        width: DimensManager.dimensHomeSize.fullWidthSafeArea,
-//        color: Colors.white, //SafeAreaの背景色
-        child: Consumer<BaseViewModel>(
-          builder: (_,model,__) {
+    return Consumer<BaseViewModel>(
+      builder: (_,model,__) {
 
-            if (_baseViewModel.isFinishSplash == false && _settingViewModel.isInitSplash == true) {
-              return SplashView(_baseViewModel,_settingViewModel);
+        if (_baseViewModel.isFinishSplash == false && _settingViewModel.isInitSplash == true) {
+          return SplashView(_baseViewModel,_settingViewModel);
 
-            } else {
-              return AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                opacity: _settingViewModel.isInitSplash
-                    ? _baseViewModel.isStartFadeIn ? 1.0 : 0.0
-                    : 1.0,
-                child: Scaffold(
-                  appBar: PreferredSize(
-                    preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
-                    child: AppBar(
-                      backgroundColor: Colors.black,
-                      title: Text(model.appBarTitle),
-                      leading: _baseViewModel.getPageName() == PageName.SETTING
-                          ? null
-                          : Container(),
-                    ),
-                  ),
-
-                  body:_pageList[model.selectedIndex],
-
-                  bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
-                ),
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  /// Debug用のbuildメソッドの中身(リビルドするとSplashViewのアニメーションがうまく動作せずいちいちホットリスタートしなければならないため)
-  Widget _debugBuilder() {
-    return SafeArea(
-      child: Container(
-//        height: DimensManager.dimensHomeSize.fullHeightSafeArea,
-//        width: DimensManager.dimensHomeSize.fullWidthSafeArea,
-        child: Consumer<BaseViewModel>(
-          builder: (_,model,__) {
-            return Scaffold(
+        } else {
+          return AnimatedOpacity(
+            duration: Duration(milliseconds: 500),
+            opacity: _settingViewModel.isInitSplash
+                ? _baseViewModel.isStartFadeIn ? 1.0 : 0.0
+                : 1.0,
+            child: Scaffold(
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
                 child: AppBar(
-                  backgroundColor: Colors.black,
+                  centerTitle: true,
                   title: Text(model.appBarTitle),
                   leading: _baseViewModel.getPageName() == PageName.SETTING
                       ? null
@@ -116,10 +79,34 @@ class BaseView extends StatelessWidget {
               body:_pageList[model.selectedIndex],
 
               bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
-            );
-          },
-        ),
-      ),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  /// Debug用のbuildメソッドの中身(リビルドするとSplashViewのアニメーションがうまく動作せずいちいちホットリスタートしなければならないため)
+  Widget _debugBuilder() {
+    return Consumer<BaseViewModel>(
+      builder: (_,model,__) {
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
+            child: AppBar(
+              centerTitle: true,
+              title: Text(model.appBarTitle),
+              leading: _baseViewModel.getPageName() == PageName.SETTING
+                  ? null
+                  : Container(),
+            ),
+          ),
+
+          body:_pageList[model.selectedIndex],
+
+          bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
+        );
+      },
     );
   }
 

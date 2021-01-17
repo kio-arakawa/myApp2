@@ -20,39 +20,40 @@ class BottomNavigationBarItems extends StatelessWidget {
       height: DimensManager.dimensHomeSize.bottomNavigationBarHeight,
       child: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: _settingViewModel.isDarkMode ? Colors.black : Colors.black,
-          textTheme: Theme.of(context).textTheme.copyWith(
-              caption: TextStyle(color: _settingViewModel.isDarkMode ? Colors.white : Colors.black),
-          ),
+          canvasColor: _settingViewModel.isDarkMode ? Colors.black : Colors.blue,
         ),
         child: Selector<BaseViewModel,DataBaseState>(
           selector: (context, state) => _model.getState,
           builder: (_,model,__) {
-            return BottomNavigationBar(
-              items: const <BottomNavigationBarItem> [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text('Home'),
+            //通信中はクリックガードする
+            return IgnorePointer(
+              ignoring: _model.getState == DataBaseState.STOP ? false : true,
+              child: Opacity(
+                opacity: _model.getState == DataBaseState.STOP ? 1.0 : 0.3,
+                child: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem> [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      title: Text('Home'),
 //                  backgroundColor: Colors.white,
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.edit),
+                      title: Text('Diary'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.import_contacts),
+                      title: Text('History'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.settings),
+                      title: Text('Setting'),
+                    ),
+                  ],
+                  currentIndex: _model.selectedIndex,
+                  onTap: _model.onItemTapped,
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.edit),
-                  title: Text('Diary'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.import_contacts),
-                  title: Text('History'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  title: Text('Setting'),
-                ),
-              ],
-              currentIndex: _model.selectedIndex,
-              //通信中の時は画面遷移しない
-              onTap: _model.getState == DataBaseState.STOP
-                  ? _model.onItemTapped
-                  : null,
+              ),
             );
           },
         ),
