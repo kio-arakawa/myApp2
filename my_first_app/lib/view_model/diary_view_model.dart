@@ -35,7 +35,7 @@ class ChatViewModel extends ChangeNotifierModel {
 
 
   ///登録ボタン押下時API
-  void onTapRegisterButton(String value) {
+  void onTapRegisterButton(TextEditingController controller) {
     //空文字だけの時は、登録しないかつタイムラインにも表示しない
 //    if (value != '' && id != null && tension != null) {
 //      text = value;
@@ -60,20 +60,23 @@ class ChatViewModel extends ChangeNotifierModel {
 //      notifyListeners();
 //    }
 
-      //リスト(Container)の数増やす
-      listIndex++;
-      _createValueKey(listIndex);
       //増やしたリスト(Container)に文字セット
-      registerStrings = value;
-      //自分で登録したからTrue
-      isMyRegisterString = true;
-      //データベースID登録
+      registerStrings = controller.value.text;
+      if (registerStrings.isNotEmpty) {
+        //自分で登録したからTrue
+        isMyRegisterString = true;
+        //リスト(Container)の数を増やす
+        listIndex++;
+        //テキストフィールドの文字をクリア
+        controller.clear();
+        //データベースID登録
 //      setId(listIndex);
-      //テンション登録
+        //テンション登録
 //      setTension('TBD');
-      //データベース登録
-      addHistory('TBD', value);
+        //データベース登録
+        addHistory('TBD', controller.value.text);
 //      debugPrint('登録内容${getHistory()}');
+      }
       //変更通知
       notifyListeners();
   }

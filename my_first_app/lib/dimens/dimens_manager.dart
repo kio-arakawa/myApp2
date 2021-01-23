@@ -1,5 +1,7 @@
 import 'package:my_first_app/dimens/dimens_home.dart';
+import 'package:my_first_app/view/diary_view.dart';
 import 'package:my_first_app/view/home_view.dart';
+import 'package:my_first_app/dimens/dimens_diary.dart';
 
 class DimensManager {
 
@@ -21,9 +23,14 @@ class DimensManager {
   DimensHome _dimensHome;
   DimensHome get dimensHomeInstance => _dimensHome;
   static DimensHome get dimensHomeSize => _instance.dimensHomeInstance;
+  ///Dimens Diary
+  DimensDiary _dimensDiary;
+  DimensDiary get dimensDiaryInstance => _dimensDiary;
+  static DimensDiary get dimensDiarySize => _instance.dimensDiaryInstance;
 
   void _initialViewDimens() {
     _dimensHome ??= DimensHome();
+    _dimensDiary ??= DimensDiary();
   }
 
   void initialDimens<T>() {
@@ -31,6 +38,10 @@ class DimensManager {
       case HomeView:
         _dimensHome ??= DimensHome();
         _dimensHome.calculatorRatio();
+        break;
+      case DiaryView:
+        _dimensDiary ??= DimensDiary();
+        _dimensDiary.calculatorRatio();
         break;
       default:
         print('Dimens Data None!');

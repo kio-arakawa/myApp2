@@ -94,6 +94,8 @@ class LoginView extends StatelessWidget {
 
                       //パスワード入力用フィールド
                       TextFormField(
+                        //入力文字マスキングON
+                        obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'User Password',
                           hintText: 'Enter your password.',

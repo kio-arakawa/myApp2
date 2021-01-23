@@ -1,10 +1,14 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:my_first_app/dimens/dimens_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
 import 'package:my_first_app/view_model/diary_view_model.dart';
 import 'package:my_first_app/model/data_base_model.dart';
+import 'package:my_first_app/dimens/dimens_diary.dart';
+import 'package:my_first_app/view/widget/bubble_border.dart';
 
 class DiaryView extends StatelessWidget {
 
@@ -14,125 +18,166 @@ class DiaryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('diaryViewBuild');
-    final textController = new TextEditingController();
-    ///MediaQueryで端末のサイズを取得する位置はBaseViewでリビルドが走らないとこですべき、またはBaseViewModel
-    final Size size = MediaQuery.of(context).size;
-    final double sizeHeight = size.height;
-    final double sizeWidth = size.width;
+    DimensManager.dimensDiarySize.initialDimens<DiaryView>();
+    final TextEditingController textController = new TextEditingController();
     final databaseStream = Provider.of<DataBaseModel>(context);
-    return Consumer<ChatViewModel>(
-      builder: (_,model,__) {
-        return Container(
-          // 高さを指定しないと、タイムラインが空白の時テキストボックス＆送信ボタンWidgetができる限り小さくなろうとする
-          // すなわち、Positionedでbottomを0指定していても無効化される
-          height: sizeHeight,
-          margin: EdgeInsets.only(top: 20),
-          child: StreamBuilder(
-            initialData: DataBaseState.STOP,
-            stream: databaseStream.state,
-            builder: (BuildContext context, AsyncSnapshot<DataBaseState> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.done) {
-                if (model.getState == DataBaseState.STOP) {
-                  return Stack(
-                    children: <Widget>[
+    return WillPopScope(
+      onWillPop: () async => true,
+      child: Consumer<ChatViewModel>(
+        builder: (_,model,__) {
+          return Container(
+            // 高さを指定しないと、タイムラインが空白の時テキストボックス＆送信ボタンWidgetができる限り小さくなろうとする
+            // すなわち、Positionedでbottomを0指定していても無効化される
+            height: DimensManager.dimensDiarySize.viewBaseHeight,
+            width: DimensManager.dimensDiarySize.viewBaseWidth,
+            margin: EdgeInsets.only(top: DimensManager.dimensDiarySize.diaryListTopMargin),
+            child: StreamBuilder(
+              initialData: DataBaseState.STOP,
+              stream: databaseStream.state,
+              builder: (BuildContext context, AsyncSnapshot<DataBaseState> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.done) {
+                  if (model.getState == DataBaseState.STOP) {
+                    return Stack(
+                      children: <Widget>[
 
 //                      model.chatWidgetMap[model.listIndex],
 
-//                      ///チャットタイムライン
-                      ListView.builder(
-                        padding: EdgeInsets.only(bottom: sizeHeight * 0.075),
-                        //ListViewの大きさ自動調整ON(たまに出るエラーを防ぐため)
-                        shrinkWrap: true,
-                        itemCount: model.listIndex,
-                        itemBuilder: (BuildContext context, int i) {
-                          return _chatWidget(model, sizeWidth);
-                        },
-                      ),
+                        ///チャットタイムライン
+                        ListView.builder(
+                          padding: EdgeInsets.only(bottom: DimensManager.dimensDiarySize.diaryListBottomMargin),
+                          //ListViewの大きさ自動調整ON(たまに出るエラーを防ぐため)
+                          shrinkWrap: true,
+                          itemCount: model.listIndex,
+                          itemBuilder: (BuildContext context, int i) {
+                            return model.registerStrings.isNotEmpty
+                                ? _chatWidget(model)
+                                : Container()
+                            ;
+                          },
+                        ),
 
-                      ///テキストボックスと登録ボタン
-                      Positioned(
-                        height: sizeHeight * 0.075,  ///8%
-                        left: 0.0,
-                        right: 0.0,
-                        bottom: 0.0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          child: Stack(
-                            children: <Widget>[
+                        ///テキストボックスと登録ボタン
+                        Positioned(
+                          height: DimensManager.dimensDiarySize.inputTextBoxAndRegisterButtonContainerHeight,  ///0.075
+                          left: DimensManager.dimensDiarySize.zero,
+                          right: DimensManager.dimensDiarySize.zero,
+                          bottom: DimensManager.dimensDiarySize.zero,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            child: Stack(
+                              children: <Widget>[
 
-                              ///テキストフォーム
-                              Positioned(
-                                height: sizeHeight * 0.075,
-                                width: sizeWidth * 0.65,
-                                left: sizeWidth * 0.07,
-                                child: Center(
-                                  child: TextFormField(
-                                    controller: textController,
+                                ///テキストフォーム
+                                Positioned(
+                                  height: DimensManager.dimensDiarySize.inputTextBoxHeight,
+                                  width: DimensManager.dimensDiarySize.inputTextBoxWidth,
+                                  left: DimensManager.dimensDiarySize.inputTextBoxMarginLeft,
+                                  child: Center(
+                                    child: TextFormField(
+                                      minLines: 1,
+                                      maxLines: 2,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.black),
+                                        ),
+                                      ),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                      controller: textController,
+                                    ),
                                   ),
                                 ),
-                              ),
 
-                              ///登録ボタン
-                              Positioned(
-                                height: sizeHeight * 0.04,
-                                width: sizeWidth * 0.2,
-                                right: sizeWidth * 0.04,
-                                top: sizeHeight * 0.02,
-                                child: RaisedButton(
-                                  color: Colors.grey,
-                                  shape: StadiumBorder(),
-                                  onPressed: () {
-                                    //通信中はBottomNavigationロック
+                                ///登録ボタン
+                                Positioned(
+                                  height: DimensManager.dimensDiarySize.registerButtonHeight,
+                                  width: DimensManager.dimensDiarySize.registerButtonWidth,
+                                  top: DimensManager.dimensDiarySize.registerButtonMarginTop,
+                                  right: DimensManager.dimensDiarySize.registerButtonMarginRight,
+                                  child: RaisedButton(
+                                    color: Colors.grey,
+                                    shape: StadiumBorder(),
+                                    onPressed: () {
+                                      //通信中はBottomNavigationロック
 //                                    _baseViewModel.setState(DataBaseState.CONNECTING);
-                                    model.onTapRegisterButton(textController.value.text);
+                                      model.onTapRegisterButton(textController);
 //                                    model.setChatWidget(++model.listIndex, _chatWidget(model, sizeWidth));
-                                  },
-                                  child: Text('記録'),
+                                    },
+                                    child: FittedBox(
+                                      child: Text(
+                                        '記録',
+                                        style: TextStyle(
+                                          fontSize: DimensManager.dimensDiarySize.registerButtonTextSize,
+                                        ),
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
 
-                    ],
-                  );
+                      ],
+                    );
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
                 } else {
                   return Center(child: CircularProgressIndicator());
                 }
-
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-        );
-      },
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Widget _chatWidget(ChatViewModel model, double sizeWidth) {
-    return Container(
-      key: model.key,
-      decoration: BoxDecoration(
-        //角丸にする
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: Colors.lightGreen,
-      ),
-      margin: EdgeInsets.only(
-        bottom: 10,
-        left: model.isMyRegisterString ? sizeWidth * 0.05 : 0,
-        right: model.isMyRegisterString ? sizeWidth * 0.01 : 0,
-      ),
-      padding: EdgeInsets.all(8),
-      child: Text(
-        '${model.registerStrings}',
-        //テキストは右寄せ
-        textAlign: TextAlign.start,
+  Widget _chatWidget(ChatViewModel model) {
+    return Align(
+      alignment: model.isMyRegisterString ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        key: model.key,
+        decoration: ShapeDecoration(
+          color: model.isMyRegisterString ? Colors.lightGreen : Colors.grey,
+          shape: BubbleBorder(isMyRegister: model.isMyRegisterString),
+        ),
+        margin: EdgeInsets.only(
+          left: model.isMyRegisterString
+              ? DimensManager.dimensDiarySize.registerTextContainerForeMargin
+              : DimensManager.dimensDiarySize.registerTextContainerBackMargin,
+          right: model.isMyRegisterString
+              ? DimensManager.dimensDiarySize.registerTextContainerBackMargin
+              : DimensManager.dimensDiarySize.registerTextContainerForeMargin,
+          bottom: DimensManager.dimensDiarySize.registerTextContainerMarginBottom,
+        ),
+        padding: EdgeInsets.fromLTRB(
+          DimensManager.dimensDiarySize.registerTextContainerPaddingHorizontal,
+          DimensManager.dimensDiarySize.registerTextContainerPaddingVertical,
+          DimensManager.dimensDiarySize.registerTextContainerPaddingHorizontal,
+          DimensManager.dimensDiarySize.registerTextContainerPaddingVertical,
+        ),
+        child: Text(
+          //登録内容
+          '${model.registerStrings}',
+          //テキストは左寄せ
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontSize: DimensManager.dimensDiarySize.registerTextFontSize,
+          ),
+        ),
       ),
     );
+
   }
 
 }

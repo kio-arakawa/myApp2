@@ -18,75 +18,78 @@ class HomeView extends StatelessWidget {
     debugPrint('homeViewBuild');
     //初期設定
     _initializer();
-    return Container(
+    return WillPopScope(
+      onWillPop: () async => true,
+      child: Container(
 //      height: DimensManager.dimensHomeSize.fullHeightSafeArea,
 //      width: DimensManager.dimensHomeSize.fullWidthSafeArea,
-      child: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            //Columnの中央揃え
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              //Columnの中央揃え
 //        mainAxisSize: MainAxisSize.min,
-            //上端揃え
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
+              //上端揃え
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
 
-              ///日付表示
-              Consumer<HomeViewModel>(
-                builder: (_,model,__) {
-                  return _myCard(
-                    isCard: false,
+                ///日付表示
+                Consumer<HomeViewModel>(
+                  builder: (_,model,__) {
+                    return _myCard(
+                      isCard: false,
 //                      width: 400.0,
 //                      height: 80.0,
-                    cardColor: Colors.deepOrangeAccent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
+                      cardColor: Colors.deepOrangeAccent,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
 
-                        Icon(
-                          Icons.access_alarms,
-                        ),
-
-                        Text(
-                          '  ${model.getDateTime()}',
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                          Icon(
+                            Icons.access_alarms,
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
 
-              ///プロフィールカード
-              _myCard(
-                isCard: true,
-                width: 400.0,
-                height: 150.0,
-                cardColor: null,
-                child: Row(
-                  children: <Widget>[
-                    CircleAvatar(
-                      backgroundImage: null,
-                      child: FittedBox(
-                        child: Text(
-                          'User Image',
-                          style: TextStyle(
-                            color: Colors.black,
+                          Text(
+                            '  ${model.getDateTime()}',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      minRadius: 40.0,
-                      maxRadius: 60.0,
-                      backgroundColor: Colors.grey,
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
 
-            ],
+                ///プロフィールカード
+                _myCard(
+                  isCard: true,
+                  width: 400.0,
+                  height: 150.0,
+                  cardColor: null,
+                  child: Row(
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundImage: null,
+                        child: FittedBox(
+                          child: Text(
+                            'User Image',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        minRadius: 40.0,
+                        maxRadius: 60.0,
+                        backgroundColor: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
           ),
         ),
       ),

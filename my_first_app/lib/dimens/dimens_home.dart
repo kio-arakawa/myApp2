@@ -14,7 +14,7 @@ class DimensHome extends DimensBase {
   }
 
   @override
-  void calculatorRatio<DimensHome>() {
+  void calculatorRatio<HomeView>() {
 
   }
 
