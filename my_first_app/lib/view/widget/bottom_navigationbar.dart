@@ -17,6 +17,7 @@ class BottomNavigationBarItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      // ⚠︎SizedBoxを使用する場合は、HomeIndicatorの高さを考慮する
       height: DimensManager.dimensHomeSize.bottomNavigationBarHeight,
       child: Theme(
         data: Theme.of(context).copyWith(

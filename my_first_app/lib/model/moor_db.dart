@@ -71,7 +71,7 @@ class MyDatabase extends _$MyDataBase {
   /// @param todoById
   /// 対応するIDの登録内容を取得する
   /// DBの変更を監視し、変更があると更新結果を自動返却
-  Stream<MoorDataBase> todoById(int id) {
+  Stream<MoorDataBase> diaryById(int id) {
     return (select(moorDataBases)..where((t) => t.id.equals(id))).watchSingle();
   }
 

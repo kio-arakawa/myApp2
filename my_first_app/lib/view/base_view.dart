@@ -66,6 +66,7 @@ class BaseView extends StatelessWidget {
                 : 1.0,
             child: Scaffold(
               appBar: PreferredSize(
+                /// ⚠︎Scaffoldのappbarプロパティを使用して、preferredSizeに高さ指定する場合は、StatusBarの高さを考慮しなくても良い
                 preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
                 child: AppBar(
                   centerTitle: true,

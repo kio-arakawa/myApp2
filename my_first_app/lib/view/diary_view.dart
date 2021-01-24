@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:my_first_app/model/moor_db.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
@@ -15,10 +16,14 @@ class DiaryView extends StatelessWidget {
   ///Constructor
   DiaryView({Key key}) : super(key: key);
 
+  void _initializer() {
+    DimensManager.dimensDiarySize.initialDimens<DiaryView>();
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('diaryViewBuild');
-    DimensManager.dimensDiarySize.initialDimens<DiaryView>();
+    _initializer();
     final TextEditingController textController = new TextEditingController();
     final databaseStream = Provider.of<DataBaseModel>(context);
     return WillPopScope(
@@ -40,19 +45,30 @@ class DiaryView extends StatelessWidget {
                     return Stack(
                       children: <Widget>[
 
-//                      model.chatWidgetMap[model.listIndex],
-
                         ///チャットタイムライン
-                        ListView.builder(
-                          padding: EdgeInsets.only(bottom: DimensManager.dimensDiarySize.diaryListBottomMargin),
-                          //ListViewの大きさ自動調整ON(たまに出るエラーを防ぐため)
-                          shrinkWrap: true,
-                          itemCount: model.listIndex,
-                          itemBuilder: (BuildContext context, int i) {
-                            return model.registerStrings.isNotEmpty
-                                ? _chatWidget(model)
-                                : Container()
-                            ;
+                        FutureBuilder(
+                          future: model.getFutureData(),
+                          builder: (_, AsyncSnapshot<List<MoorDataBase>> snapshot) {
+                            debugPrint('data:${snapshot.data}');
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else {
+                              if (snapshot.hasData) {
+                                return ListView.builder(
+                                  padding: EdgeInsets.only(bottom: DimensManager.dimensDiarySize.diaryListBottomMargin),
+                                  //ListViewの大きさ自動調整ON(たまに出るエラーを防ぐため)
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (_, int widgetId) {
+                                    return snapshot.data.isNotEmpty
+                                        ? _chatWidget(model, snapshot.data[widgetId])
+                                        : Container()
+                                    ;
+                                  },
+                                );
+                              }
+                              return CircularProgressIndicator();
+                            }
                           },
                         ),
 
@@ -141,20 +157,23 @@ class DiaryView extends StatelessWidget {
     );
   }
 
-  Widget _chatWidget(ChatViewModel model) {
+  Widget _chatWidget(ChatViewModel model, MoorDataBase data) {
     return Align(
-      alignment: model.isMyRegisterString ? Alignment.centerRight : Alignment.centerLeft,
+      //Todo:自分が登録したか、相手が登録したかもDBに登録する（現状エラーになる）
+      //Todo:tensionのアリナシで、自分か相手（Non)かを判定することにする予定
+      alignment: model.isMyRegister ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         key: model.key,
+        // 自作のBubbleBorderクラスで吹き出し方のContainerを作成
         decoration: ShapeDecoration(
-          color: model.isMyRegisterString ? Colors.lightGreen : Colors.grey,
-          shape: BubbleBorder(isMyRegister: model.isMyRegisterString),
+          color: model.isMyRegister ? Colors.lightGreen : Colors.grey,
+          shape: BubbleBorder(isMyRegister: model.isMyRegister),
         ),
         margin: EdgeInsets.only(
-          left: model.isMyRegisterString
+          left: model.isMyRegister
               ? DimensManager.dimensDiarySize.registerTextContainerForeMargin
               : DimensManager.dimensDiarySize.registerTextContainerBackMargin,
-          right: model.isMyRegisterString
+          right: model.isMyRegister
               ? DimensManager.dimensDiarySize.registerTextContainerBackMargin
               : DimensManager.dimensDiarySize.registerTextContainerForeMargin,
           bottom: DimensManager.dimensDiarySize.registerTextContainerMarginBottom,
@@ -167,7 +186,7 @@ class DiaryView extends StatelessWidget {
         ),
         child: Text(
           //登録内容
-          '${model.registerStrings}',
+          '${data.diaryTexts}',
           //テキストは左寄せ
           textAlign: TextAlign.start,
           style: TextStyle(
