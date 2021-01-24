@@ -13,9 +13,7 @@ class BaseViewModel extends ChangeNotifierModel{
   static BaseViewModel _baseViewModel;
 
   factory BaseViewModel() {
-    if (_baseViewModel == null) {
-      _baseViewModel = BaseViewModel._();
-    }
+    _baseViewModel ??= BaseViewModel._();
     return _baseViewModel;
   }
 

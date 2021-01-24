@@ -26,6 +26,9 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
   int _alignmentIndex2 = 0;
   //Randomインスタンス
   Random _random;
+  //アニメーションTimer
+  Timer _opacityTimers;
+  Timer _alignmentTimers;
 
   //Alignment位置指定用リスト
   static const List<Alignment> _alignments = [
@@ -41,19 +44,22 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
   void initState() {
     super.initState();
     _random  = new Random();
-    _animationTimer();
+    _opacityTimer();
     _alignmentTimer();
   }
 
   @override
   void dispose() {
     //Todo
+    //アニメーションTimerのメモリリソース解放
+    _opacityTimers.cancel();
+    _alignmentTimers.cancel();
     super.dispose();
   }
 
   //Opacity用タイマー開始API
-  void _animationTimer() {
-    Timer.periodic(
+  void _opacityTimer() {
+    _opacityTimers = Timer.periodic(
       Duration(milliseconds: 4000),
       _changeOpacity,
     );
@@ -67,7 +73,7 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
 
   //Alignment用タイマー開始API
   void _alignmentTimer() {
-    Timer.periodic(
+    _alignmentTimers = Timer.periodic(
       Duration(milliseconds: 2000),
       _changeAlignment,
     );

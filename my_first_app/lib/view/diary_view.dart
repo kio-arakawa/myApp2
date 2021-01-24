@@ -76,8 +76,6 @@ class DiaryView extends StatelessWidget {
                                   left: DimensManager.dimensDiarySize.inputTextBoxMarginLeft,
                                   child: Center(
                                     child: TextFormField(
-                                      minLines: 1,
-                                      maxLines: 2,
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(color: Colors.grey),
@@ -106,6 +104,7 @@ class DiaryView extends StatelessWidget {
                                     onPressed: () {
                                       //通信中はBottomNavigationロック
 //                                    _baseViewModel.setState(DataBaseState.CONNECTING);
+                                      /// 登録ボタン押下時Action
                                       model.onTapRegisterButton(textController);
 //                                    model.setChatWidget(++model.listIndex, _chatWidget(model, sizeWidth));
                                     },

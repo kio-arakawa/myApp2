@@ -10,6 +10,7 @@ import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:my_first_app/model/user_info.dart';
 import 'package:my_first_app/model/data_base_model.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:my_first_app/model/moor_db.dart';
 
 void main() {
   runApp(
@@ -28,12 +29,14 @@ void main() {
 class MyApp extends StatelessWidget {
 
   ///Variable
-  //ユーザー情報のリポジトリmodel
+  //ユーザー情報のリポジトリmodel(SharedPreferences)
   final UserInfo _userInfoModel;
 
   MyApp(this._userInfoModel) {
-    ///DimensManager
+    /// DimensManager
     DimensManager();
+    /// Diaryデータベースのインスタンス化
+    MyDatabase();
     debugPrint('initialDimensManager');
   }
 
