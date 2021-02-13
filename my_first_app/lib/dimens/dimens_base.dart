@@ -45,11 +45,11 @@ class DimensBase {
     /// 全て計算処理する必要がある時のみ処理
     if (_isNeedReCalcRatio == true) {
       fullHeightSafeArea = fullHeight - (statusBarHeight + homeIndicatorHeight);
-      fullHeightSafeArea = fullWidth;
+      fullWidthSafeArea = fullWidth;
       // ⚠︎ScaffoldのAppBarプロパティのpreferredSizeを使用しているため、statusBarHeightは考慮しない
-      headerHeight = fullHeightSafeArea * 0.1;
+      headerHeight = fullHeightSafeArea * 0.08;
       // ⚠︎SizedBoxを使用する場合は、HomeIndicatorの高さを考慮する
-      bottomNavigationBarHeight = (fullHeightSafeArea * 0.15) + homeIndicatorHeight;
+      bottomNavigationBarHeight = (fullHeightSafeArea * 0.08) + homeIndicatorHeight;
       viewBaseHeight = fullHeight - (headerHeight + bottomNavigationBarHeight);
       viewBaseWidth = fullWidth;
       debugPrint('fullHeight:$fullHeight, fullWidth:$fullWidth, paddingTop:$statusBarHeight, paddingBottom:$homeIndicatorHeight, '

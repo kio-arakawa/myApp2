@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/model/user_info_data.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/my_enum/page_name.dart';
@@ -16,12 +17,12 @@ import 'package:my_first_app/dimens/dimens_manager.dart';
 class BaseView extends StatelessWidget {
 
   ///Constructor
-  BaseView(this._settingViewModel, this._userInfo);
+  BaseView(this._settingViewModel, this._userInfoDataModel);
 
   ///Variable
   final BaseViewModel _baseViewModel = BaseViewModel();
   final SettingViewModel _settingViewModel;
-  final UserInfo _userInfo;
+  final UserInfoData _userInfoDataModel;
 
   ///BottomNavigationBarの遷移ページリスト
   static List<Widget> _pageList = [
@@ -92,6 +93,7 @@ class BaseView extends StatelessWidget {
     return Consumer<BaseViewModel>(
       builder: (_,model,__) {
         return Scaffold(
+          extendBody: true,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
             child: AppBar(

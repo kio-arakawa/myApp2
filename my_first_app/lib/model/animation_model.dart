@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AnimationModel extends ChangeNotifier{
+class AnimationModel extends ChangeNotifier {
 
   ///Variable
   //アニメーション停止フラグ
-  bool isAnimationStop = false;
+  bool _isAnimationStop = false;
+  bool get getAnimationState => _isAnimationStop;
 
   void stopAnimation(bool value) {
-    isAnimationStop = value;
+    _isAnimationStop = value;
     notifyListeners();
   }
 

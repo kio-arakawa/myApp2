@@ -11,100 +11,103 @@ class SettingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('settingViewBuild');
-    return Container(
-      height: 900,
-      child: SingleChildScrollView(
-        child: Consumer<SettingViewModel>(
-          builder: (_,model,__) {
-            return Column(
-              children: <Widget>[
+    //横画面の時用にSafeAreaでラップ
+    return SafeArea(
+      child: Container(
+        height: 900,
+        child: SingleChildScrollView(
+          child: Consumer<SettingViewModel>(
+            builder: (_,model,__) {
+              return Column(
+                children: <Widget>[
 
-                _createSectionContainer(
-                  section: _createSectionTitle(
-                    model: model,
-                    title: 'Developer Options',
+                  _createSectionContainer(
+                    section: _createSectionTitle(
+                      model: model,
+                      title: 'Developer Options',
+                    ),
+                    tiles: [
+                      _createListTile(
+                        model: model,
+                        isSwitchListTile: true,
+                        icon: Icon(
+                          Icons.lightbulb_outline,
+                          color: model.isDarkMode ? Colors.yellow : Colors.black,
+                        ),
+                        text: 'Dark Mode',
+                        value: model.isDarkMode,
+                        function: (bool value) => model.changeDarkMode(value),
+                      ),
+
+                      _createListTile(
+                        model: model,
+                        isSwitchListTile: true,
+                        icon: Icon(
+                          Icons.bug_report,
+                          color: model.isDebugMode ? Colors.green : Colors.black,
+                        ),
+                        text: 'Debug Mode',
+                        value: model.isDebugMode,
+                        function: (bool value) => model.changeDebugMode(value),
+                      ),
+                    ],
                   ),
-                  tiles: [
-                    _createListTile(
-                      model: model,
-                      isSwitchListTile: true,
-                      icon: Icon(
-                        Icons.lightbulb_outline,
-                        color: model.isDarkMode ? Colors.yellow : Colors.black,
-                      ),
-                      text: 'Dark Mode',
-                      value: model.isDarkMode,
-                      function: (bool value) => model.changeDarkMode(value),
-                    ),
 
-                    _createListTile(
+                  _createSectionContainer(
+                    section: _createSectionTitle(
                       model: model,
-                      isSwitchListTile: true,
-                      icon: Icon(
-                        Icons.bug_report,
-                        color: model.isDebugMode ? Colors.green : Colors.black,
-                      ),
-                      text: 'Debug Mode',
-                      value: model.isDebugMode,
-                      function: (bool value) => model.changeDebugMode(value),
+                      title: 'User Setting',
                     ),
-                  ],
-                ),
+                    tiles: [
 
-                _createSectionContainer(
-                  section: _createSectionTitle(
-                    model: model,
-                    title: 'User Setting',
+                      _createListTile(
+                        model: model,
+                        isSwitchListTile: false,
+                        icon: Icon(
+                          Icons.assignment_ind,
+                          color: model.isDarkMode ? Colors.black : Colors.black,
+                        ),
+                        text: 'Setting Profile',
+                        function: null,
+                      ),
+
+                      _createListTile(
+                        model: model,
+                        isSwitchListTile: false,
+                        icon: Icon(
+                          Icons.autorenew,
+                          color: model.isDarkMode ? Colors.black : Colors.black,
+                        ),
+                        text: 'Diary Information Initialization',
+                        function: null,
+                      ),
+
+                    ],
                   ),
-                  tiles: [
 
-                    _createListTile(
+                  _createSectionContainer(
+                    section: _createSectionTitle(
                       model: model,
-                      isSwitchListTile: false,
-                      icon: Icon(
-                        Icons.assignment_ind,
-                        color: model.isDarkMode ? Colors.black : Colors.black,
-                      ),
-                      text: 'Setting Profile',
-                      function: null,
+                      title: 'Other',
                     ),
-
-                    _createListTile(
-                      model: model,
-                      isSwitchListTile: false,
-                      icon: Icon(
-                        Icons.autorenew,
-                        color: model.isDarkMode ? Colors.black : Colors.black,
+                    tiles: [
+                      _createListTile(
+                        model: model,
+                        isSwitchListTile: false,
+                        icon: Icon(
+                          Icons.help,
+                          color: model.isDarkMode ? Colors.black : Colors.black,
+                        ),
+                        text: 'Help',
+                        function: null,
                       ),
-                      text: 'Diary Information Initialization',
-                      function: null,
-                    ),
-
-                  ],
-                ),
-
-                _createSectionContainer(
-                  section: _createSectionTitle(
-                    model: model,
-                    title: 'Other',
+                    ]
                   ),
-                  tiles: [
-                    _createListTile(
-                      model: model,
-                      isSwitchListTile: false,
-                      icon: Icon(
-                        Icons.help,
-                        color: model.isDarkMode ? Colors.black : Colors.black,
-                      ),
-                      text: 'Help',
-                      function: null,
-                    ),
-                  ]
-                ),
 
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

@@ -10,7 +10,7 @@ class BackGroundAnimation extends StatefulWidget {
   BackGroundAnimation(this._animationModel);
 
   ///Variable
-  AnimationModel _animationModel;
+  final AnimationModel _animationModel;
 
   @override
   _BackGroundAnimationState createState() => _BackGroundAnimationState();
@@ -90,7 +90,7 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget._animationModel.isAnimationStop) {
+    if (widget._animationModel.getAnimationState) {
       return Container();
     } else {
       return AnimatedOpacity(

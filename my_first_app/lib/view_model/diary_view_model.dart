@@ -39,6 +39,12 @@ class ChatViewModel extends ChangeNotifierModel {
   Map<int, String> diaryDataMap = {};
   Future<List<MoorDataBase>> _allData;
 
+  @override
+  void setState(DataBaseState state) {
+    super.setState(state);
+    notifyListeners();
+  }
+
   Future <List<MoorDataBase>> getFutureData() async {
     return await _myDatabase.allDiaryEntries;
   }

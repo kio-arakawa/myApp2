@@ -5,7 +5,7 @@ import 'package:my_first_app/model/data_base_model.dart';
 
 abstract class ChangeNotifierModel extends ChangeNotifier with DataBaseModel{
 
-  //HistoryDataBaseの通信状態(初期値STOP)
+  //MoorDBの通信状態(初期値STOP)
   DataBaseState _dataBaseState = DataBaseState.STOP;
 
   //通信状態のGETメソッド
@@ -14,6 +14,7 @@ abstract class ChangeNotifierModel extends ChangeNotifier with DataBaseModel{
   //通信状態変更
   void setState(DataBaseState state) {
     _dataBaseState = state;
+    notifyListeners();
   }
 
   @override

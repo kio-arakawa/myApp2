@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:my_first_app/constants.dart';
+import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
+import 'package:my_first_app/model/moor_db.dart';
 
 class BaseViewModel extends ChangeNotifierModel{
 
@@ -17,7 +19,6 @@ class BaseViewModel extends ChangeNotifierModel{
     return _baseViewModel;
   }
 
-  ///Variable
   //AppBarTitle
   String appBarTitle = 'Home';
 
