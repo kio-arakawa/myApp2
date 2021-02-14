@@ -45,6 +45,10 @@ dependencies:
 
   rxdart: ^0.24.1
 
+  flutter_native_splash: ^0.3.0
+
+  flutter_launcher_icons: ^0.8.1
+
 dev_dependencies:
 
   moor_generator: ^3.4.1
@@ -54,11 +58,21 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "assets/my_app.png"
+  image_path_android: "assets/my_app_android.png"
+  adaptive_icon_foreground: "assets/my_app_android.png"
+  adaptive_icon_background: "assets/my_app_android.png"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
+  assets:
+    - assets/my_app.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -95,3 +109,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_native_splash:
+  image: "assets/my_app_launch.png"
+  color: "FFFFFF"
