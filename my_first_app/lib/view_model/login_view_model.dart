@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_app/model/user_info_data.dart';
+import 'package:my_first_app/view_model/change_notifier_model.dart';
 
-class LoginViewModel extends ChangeNotifier {
+class LoginViewModel extends ChangeNotifierModel {
 
   UserInfoData _userInfoData;
 
@@ -47,6 +48,7 @@ class LoginViewModel extends ChangeNotifier {
     return _loginViewModel;
   }
 
+  // ユーザー名・パスワードチェック
   void checkDoneAll() {
     if (isDoneName && isDonePass) {
       setIsDoneAll(true);
@@ -54,25 +56,39 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  // ユーザー名のフラグ変更
   void changeIsDoneName(bool isDone) {
+    // ユーザー名のフラグセット
     setIsDoneName(isDone);
+    // ユーザー名・パスワードのフラグチェック
     if (isDoneName && isDonePass) {
+      // 両方チェックOKの場合
       setIsDoneAll(true);
+      // どちらかでもNGの場合
     } else {
       setIsDoneAll(false);
     }
+//    notifyListeners();
   }
 
+  // パスワードのフラグ変更
   void changeIsDonePass(bool isDone) {
+    // パスワードのフラグセット
     setIsDonePass(isDone);
+    // ユーザー名・パスワードのフラグチェック
     if (isDoneName && isDonePass) {
+      // 両方チェックOKの場合
       setIsDoneAll(true);
+      // どちらかでもNGの場合
     } else {
       setIsDoneAll(false);
     }
+//    notifyListeners();
   }
 
+  // アカウント情報のチェック
   Future<bool> checkMatchAccount(String name, String pass) async {
+    // ユーザー名とパスワードがnullでない時
     if ( (name != null) && (pass != null) ) {
       if (name != await _userInfoData.getUserName()) {
         debugPrint('ユーザー名またはパスワードが異なっています。');
@@ -82,6 +98,9 @@ class LoginViewModel extends ChangeNotifier {
         debugPrint('パスワード名またはパスワードが異なっています。');
         return false;
       }
+    // ユーザー名またはパスワードがnullの時
+    } else {
+      return false;
     }
     debugPrint('アカウントが正常に照合されました！');
     return true;

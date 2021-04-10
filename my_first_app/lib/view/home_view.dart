@@ -1,265 +1,129 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
+import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:my_first_app/view/widget/custom_card_widget.dart';
 import 'package:my_first_app/view_model/home_view_model.dart';
+import 'package:my_first_app/constants.dart';
 
 class HomeView extends StatelessWidget {
 
   ///Constructor
   HomeView({Key key}) : super(key: key);
 
-  void _initializer() {
-    DimensManager.instance.initialDimens<HomeView>();
+  void _initializer(BuildContext context) {
+    DimensManager.dimensHomeSize.initialDimens<HomeView>(context);
   }
 
   @override
   Widget build(BuildContext context) {
     debugPrint('homeViewBuild');
     //初期設定
-    _initializer();
+    _initializer(context);
     //LoginViewに戻さない
     return WillPopScope(
       onWillPop: () async => true,
       //横画面の時用にSafeAreaでラップ
       child: SafeArea(
-//        child: Container(
-////      height: DimensManager.dimensHomeSize.fullHeightSafeArea,
-////      width: DimensManager.dimensHomeSize.fullWidthSafeArea,
-//          child: SingleChildScrollView(
-//            child: Center(
-//              child: Column(
-//                //Columnの中央揃え
-////        mainAxisSize: MainAxisSize.min,
-//                //上端揃え
-//                mainAxisAlignment: MainAxisAlignment.start,
-//                children: <Widget>[
-//
-//                  ///日付表示
-//                  Consumer<HomeViewModel>(
-//                    builder: (_,model,__) {
-//                      return _myCard(
-//                        isCard: false,
-////                      width: 400.0,
-////                      height: 80.0,
-//                        cardColor: Colors.deepOrangeAccent,
-//                        child: Row(
-//                          mainAxisAlignment: MainAxisAlignment.center,
-//                          children: <Widget>[
-//
-//                            Icon(
-//                              Icons.access_alarms,
-//                            ),
-//
-//                            Text(
-//                              '  ${model.getDateTime()}',
-//                              style: TextStyle(
-//                                fontStyle: FontStyle.italic,
-//                                fontWeight: FontWeight.bold,
-//                                fontSize: 20,
-//                              ),
-//                            ),
-//                          ],
-//                        ),
-//                      );
-//                    },
-//                  ),
-//
-//                  ///プロフィールカード
-//                  _myCard(
-//                    isCard: true,
-//                    width: 400.0,
-//                    height: 150.0,
-//                    cardColor: null,
-//                    child: Row(
-//                      children: <Widget>[
-//                        CircleAvatar(
-//                          backgroundImage: null,
-//                          child: FittedBox(
-//                            child: Text(
-//                              'User Image',
-//                              style: TextStyle(
-//                                color: Colors.black,
-//                              ),
-//                            ),
-//                          ),
-//                          minRadius: 40.0,
-//                          maxRadius: 60.0,
-//                          backgroundColor: Colors.grey,
-//                        ),
-//                      ],
-//                    ),
-//                  ),
-//
-//                  //Rotated Button
-//                  Container(
-//                    height: 370,
-//                    child: Center(
-//                      child: InkWell(
-//                        onTap: () => print('Rotate Tap!'),
-//                        child: Text(
-//                          'Rotate',
-//                          style: TextStyle(
-//                            fontSize: 20,
-//                            color: Colors.red,
-//                          ),
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//
-//                ],
-//              ),
+        child: Container(
+          height: DimensManager.dimensHomeSize.fullHeight,
+//          decoration: BoxDecoration(
+//            gradient: LinearGradient(
+//              begin: FractionalOffset.topCenter,
+//              end: FractionalOffset.bottomCenter,
+//              colors: [
+//                Colors.white.withOpacity(0.5),
+//                Colors.grey.withOpacity(0.5),
+//              ],
 //            ),
 //          ),
-//        ),
-
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            return orientation == Orientation.portrait ?
-             Container(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      ///日付表示
-                      Consumer<HomeViewModel>(
-                        builder: (_,model,__) {
-                          return _myCard(
-                            isCard: false,
-                            cardColor: Colors.deepOrangeAccent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.access_alarms,
-                                ),
-                                Text(
-                                  '  ${model.getDateTime()}',
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  ///日付表示
+                  Consumer<HomeViewModel>(
+                    builder: (_,model,__) {
+                      return CustomCardWidget(
+                        isCard: false,
+                        cardColor: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.access_alarms,
                             ),
-                          );
-                        },
-                      ),
-                      ///プロフィールカード
-                      _myCard(
+                            Text(
+                              '  ${model.getDateTime()}',
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  ///プロフィールカード
+                  // Info: Heroアニメーション
+                  Hero(
+                    tag: Constants.profileHeroAnimTag,
+                    child: CupertinoContextMenu(
+                      actions: [
+                        CupertinoContextMenuAction(
+                          child: Center(child: Text('設定する', style: TextStyle(fontSize: 15))),
+                          onPressed: () {
+                            // MenuActionSheetをpop
+                            Navigator.pop(context);
+                            // Profile画面へ画面遷移(With Hero Anim)
+                            Navigator.pushReplacementNamed(context, '/profile');
+                          }
+                        ),
+                        CupertinoContextMenuAction(
+                            child: Center(child: Text('閉じる', style: TextStyle(fontSize: 15))),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                      child: CustomCardWidget(
                         isCard: true,
                         width: 400.0,
                         height: 150.0,
-                        cardColor: null,
+                        cardColor: Colors.blueGrey.withOpacity(0.5),
                         child: Row(
                           children: <Widget>[
                             CircleAvatar(
-                              backgroundImage: null,
+                              backgroundImage: AssetImage(
+                                'assets/avatar_image.png',
+                              ),
                               child: FittedBox(
                                 child: Text(
                                   'User Image',
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
+                                    fontSize: 15,
                                   ),
                                 ),
                               ),
                               minRadius: 40.0,
                               maxRadius: 60.0,
-                              backgroundColor: Colors.grey,
+                              backgroundColor: Colors.transparent,
                             ),
                           ],
                         ),
                       ),
-                      //Rotated Button
-                      Container(
-                        height: 370,
-                        child: Center(
-                          child: InkWell(
-                            onTap: () => print('Rotate Tap!'),
-                            child: Text(
-                              'Rotate',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-
-                : Container(
-              height: DimensManager.dimensHomeSize.fullWidthSafeArea,
-              width: DimensManager.dimensHomeSize.fullHeightSafeArea,
-//              decoration: BoxDecoration(
-//                border: Border.all(color: Colors.red),
-//              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-//                      height: DimensManager.dimensHomeSize.fullWidthSafeArea / 2,
-//                      width: DimensManager.dimensHomeSize.fullHeightSafeArea / 2,
-                      color: Colors.lightGreen,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-//                      height: DimensManager.dimensHomeSize.fullWidthSafeArea / 2,
-//                      width: DimensManager.dimensHomeSize.fullHeightSafeArea / 2,
-                      color: Colors.orange,
                     ),
                   ),
                 ],
               ),
-            );
-          },
+            ),
+          ),
         ),
-
       ),
     );
   }
-
-  ///自作CardWidget
-  Widget _myCard({bool isCard, double width, double height, Color cardColor, Widget child}) {
-    return Container(
-      decoration: isCard
-          ? BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 1.0,
-                  blurRadius: 10.0,
-                  offset: Offset(10, 10),
-                ),
-              ],
-            )
-          : BoxDecoration(),
-      width: width,
-      height: height,
-      margin: EdgeInsets.all(10.0),
-      child: isCard
-          ? Card(
-              color: cardColor,
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: child,
-              ),
-            )
-          : Padding(
-              padding: EdgeInsets.all(10.0),
-              child: child,
-            ),
-    );
-  }
-
 }

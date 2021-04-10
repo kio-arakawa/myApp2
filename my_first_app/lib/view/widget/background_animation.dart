@@ -4,13 +4,17 @@ import 'package:flutter/material.dart';
 
 import 'package:my_first_app/model/animation_model.dart';
 
+import '../../model/animation_model.dart';
+import '../../model/animation_model.dart';
+
 class BackGroundAnimation extends StatefulWidget {
 
   ///Constructor
-  BackGroundAnimation(this._animationModel);
+  BackGroundAnimation(this._animationState);
 
   ///Variable
-  final AnimationModel _animationModel;
+  // Animation状態の情報保持
+  final BackGroundAnimationState _animationState;
 
   @override
   _BackGroundAnimationState createState() => _BackGroundAnimationState();
@@ -90,7 +94,7 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget._animationModel.getAnimationState) {
+    if (widget._animationState == BackGroundAnimationState.PAUSE) {
       return Container();
     } else {
       return AnimatedOpacity(
@@ -100,7 +104,7 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
           body: Stack(
             fit: StackFit.expand,
             children: <Widget>[
-
+              // AnimationContainer[1] //
               AnimatedContainer(
                 duration: Duration(milliseconds: 3000),
                 alignment: _alignments[_alignmentIndex1],
@@ -116,7 +120,7 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
                   ),
                 ),
               ),
-
+              // AnimationContainer[2] //
               AnimatedContainer(
                 duration: Duration(milliseconds: 5000),
                 alignment: _alignments[_alignmentIndex2],
@@ -132,7 +136,6 @@ class _BackGroundAnimationState extends State<BackGroundAnimation> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),

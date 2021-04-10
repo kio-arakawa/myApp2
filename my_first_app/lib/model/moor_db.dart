@@ -43,12 +43,12 @@ LazyDatabase _openConnection() {
 @UseMoor(tables: [MoorDataBases, Categories])
 class MyDatabase extends _$MyDataBase {
 
-  /// シングルトン
+  /// Constructor(Singleton)
   MyDatabase._() : super(_openConnection());
   static MyDatabase _instance;
   factory MyDatabase() {
-    _instance ??= MyDatabase._();
-    return _instance;
+    print('MyDataBases Instance!');
+    return _instance ??= MyDatabase._();
   }
 
   /// ??

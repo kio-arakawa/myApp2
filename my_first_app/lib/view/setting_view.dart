@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/constants.dart';
+import 'package:my_first_app/dimens/dimens_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/view_model/setting_view_model.dart';
@@ -8,25 +10,41 @@ class SettingView extends StatelessWidget {
   ///Constructor
   SettingView({Key key}) : super(key: key);
 
+  void _initializer(BuildContext context) {
+    DimensManager.dimensSettingViewSize.initialDimens<SettingView>(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('settingViewBuild');
+    _initializer(context);
     //横画面の時用にSafeAreaでラップ
     return SafeArea(
       child: Container(
-        height: 900,
+//        height: DimensManager.dimensSettingViewSize.fullHeight,
+//        decoration: BoxDecoration(
+//          gradient: LinearGradient(
+//            begin: FractionalOffset.topCenter,
+//            end: FractionalOffset.bottomCenter,
+//            colors: [
+//              Colors.white.withOpacity(1),
+//              Colors.grey.withOpacity(1),
+//            ],
+//          ),
+//        ),
         child: SingleChildScrollView(
           child: Consumer<SettingViewModel>(
             builder: (_,model,__) {
               return Column(
                 children: <Widget>[
-
+                  /// Developer Options
                   _createSectionContainer(
                     section: _createSectionTitle(
                       model: model,
                       title: 'Developer Options',
                     ),
                     tiles: [
+                      // Dark Mode
                       _createListTile(
                         model: model,
                         isSwitchListTile: true,
@@ -38,7 +56,7 @@ class SettingView extends StatelessWidget {
                         value: model.isDarkMode,
                         function: (bool value) => model.changeDarkMode(value),
                       ),
-
+                      // Debug Mode
                       _createListTile(
                         model: model,
                         isSwitchListTile: true,
@@ -52,25 +70,30 @@ class SettingView extends StatelessWidget {
                       ),
                     ],
                   ),
-
+                  /// User Setting
                   _createSectionContainer(
                     section: _createSectionTitle(
                       model: model,
                       title: 'User Setting',
                     ),
                     tiles: [
-
-                      _createListTile(
-                        model: model,
-                        isSwitchListTile: false,
-                        icon: Icon(
-                          Icons.assignment_ind,
-                          color: model.isDarkMode ? Colors.black : Colors.black,
+                      // Profile Setting
+                      Hero(
+                        tag: Constants.profileHeroAnimTag,
+                        child: _createListTile(
+                          model: model,
+                          isSwitchListTile: false,
+                          icon: Icon(
+                            Icons.assignment_ind,
+                            color: model.isDarkMode ? Colors.black : Colors.black,
+                          ),
+                          text: 'Setting Profile',
+                          function: () {
+                            Navigator.pushReplacementNamed(context, '/profile');
+                          },
                         ),
-                        text: 'Setting Profile',
-                        function: null,
                       ),
-
+                      // 日記内容初期化
                       _createListTile(
                         model: model,
                         isSwitchListTile: false,
@@ -81,10 +104,23 @@ class SettingView extends StatelessWidget {
                         text: 'Diary Information Initialization',
                         function: null,
                       ),
-
+                      // LogOut
+                      _createListTile(
+                        model: model,
+                        isSwitchListTile: false,
+                        icon: Icon(
+                          Icons.logout,
+                          color: model.isDarkMode ? Colors.black: Colors.black,
+                        ),
+                        text: 'Log Out',
+                        function: () {
+                          print('ログアウトしました！');
+                          Navigator.pushReplacementNamed(context, '/login');
+                        }
+                      ),
                     ],
                   ),
-
+                  /// Other
                   _createSectionContainer(
                     section: _createSectionTitle(
                       model: model,
@@ -103,7 +139,6 @@ class SettingView extends StatelessWidget {
                       ),
                     ]
                   ),
-
                 ],
               );
             },

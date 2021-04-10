@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/model/sync_data_base_model.dart';
 import 'package:my_first_app/view_model/login_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -9,91 +10,110 @@ import 'package:my_first_app/model/animation_model.dart';
 class LoginView extends StatelessWidget {
 
   ///Constructor
-  LoginView(this._settingViewModel);
+  LoginView(this._settingViewModel, this._syncDataBaseModel, this._loginViewModel, this._animationModel);
+//  static LoginView _instance;
+//  factory LoginView(
+//      SettingViewModel settingViewModel,
+//      SyncDataBaseModel syncDataBaseModel,
+//      LoginViewModel loginViewModel,
+//      AnimationModel animationModel,
+//      ) {
+//    return _instance ??= LoginView(settingViewModel, syncDataBaseModel, loginViewModel, animationModel);
+//  }
 
   ///Variable
-  final LoginViewModel _loginViewModel = LoginViewModel();
+  final LoginViewModel _loginViewModel;
+  final SyncDataBaseModel _syncDataBaseModel;
   final SettingViewModel _settingViewModel;
-  final AnimationModel _animationModel = AnimationModel();
+  final AnimationModel _animationModel;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
+  void _initializer() {
+    debugPrint('loginViewBuild');
+    // CallBack処理
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // BackGroundアニメーション開始
+      _animationModel.changeAnimationState(BackGroundAnimationState.RUNNING);
+      // ログイン情報チェック
+      _loginViewModel.checkDoneAll();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    _loginViewModel.checkDoneAll();
-    debugPrint('loginViewBuild');
-    return ChangeNotifierProvider(
-      create: (_) => _animationModel,
-      child: ChangeNotifierProvider(
-        create: (_) => _loginViewModel,
-        child: Scaffold(
-          body: Stack(
-            children: <Widget>[
+    // 初期処理
+    _initializer();
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
 
-              // Background Animation
-              Consumer<AnimationModel>(
-                builder: (_,model,__) {
-                  if (_animationModel.getAnimationState) {
-                    return Container();
-                  } else {
-                    return BackGroundAnimation(model);
-                  }
-                },
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(left: 50.0, right: 50.0),
-                child: Center(
-                  child: Column(
-                    // Info: 中央揃え
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-
-                      /// プロフィール画像
-                      _buildUserAvatarImage(),
-                      /// ユーザー名入力フィールド
-                      _buildUserNameField(context),
-                      /// パスワード入力用フィールド
-                      _buildUserPassWordField(context),
-                      /// ログイン用ボタン
-                      Selector<LoginViewModel, bool>(
-                        selector: (_, loginViewModel) => loginViewModel.isDoneAll,
-                        builder: (context, isDoneAll, _) {
-                          if (isDoneAll) {
-                            // Todo: リリース時は使用しないこと
-                            return _debugBuildLoginButtonWithDeleteAccount(context, true);
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-
-            ],
+          // Background Animation
+          Selector<AnimationModel, BackGroundAnimationState>(
+            selector: (_, animationModel) => animationModel.getBackGroundAnimationState,
+            builder: (_, state, __) {
+              if (state == BackGroundAnimationState.PAUSE) {
+                return Container();
+              } else {
+                return BackGroundAnimation(state);
+              }
+            },
           ),
-        ),
+
+          Padding(
+            padding: EdgeInsets.only(left: 50.0, right: 50.0),
+            child: Center(
+              child: Column(
+                // Info: 中央揃え
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+
+                  /// プロフィール画像
+                  _buildUserAvatarImage(),
+                  /// ユーザー名入力フィールド
+                  _buildUserNameField(context),
+                  /// パスワード入力用フィールド
+                  _buildUserPassWordField(context),
+                  /// ログイン用ボタン
+                  Selector<LoginViewModel, bool>(
+                    selector: (_, loginViewModel) => loginViewModel.isDoneAll,
+                    shouldRebuild: (prev, now) => prev != now,
+                    builder: (context, isDoneAll, _) {
+                      if (isDoneAll) {
+                        return _debugBuildLoginButtonWithDeleteAccount(context, true);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+
+        ],
       ),
     );
   }
 
   Widget _buildUserAvatarImage() {
     return CircleAvatar(
-      backgroundImage: null,
+      backgroundImage: AssetImage(
+        'assets/avatar_image.png',
+      ),
       child: _loginViewModel.isSetImage
           ? null
           : Text(
         'User Image',
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.white,
+          fontSize: 20,
         ),
       ),
       minRadius: 60.0,
       maxRadius: 100.0,
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.transparent,
     );
   }
 
@@ -110,10 +130,12 @@ class LoginView extends StatelessWidget {
       autovalidate: true,
       //text値変更時コールバック
       validator: (value) {
+        // ユーザー名が空ならエラー
         if (value.isEmpty) {
           _loginViewModel.changeIsDoneName(false);
           return '⚠︎Please enter your name';
         }
+        // 空チェックがOKなら
         _loginViewModel.changeIsDoneName(true);
         return null;
       },
@@ -148,6 +170,7 @@ class LoginView extends StatelessWidget {
       //text自動チェック
       autovalidate: true,
       //text値変更時コールバック
+      // Info: validatorより、onChangedが先に呼ばれるため、Passが8文字の時はisDoneAllがtrueになっていない状態でnotifyListener呼ばれてしまう
       validator: (value) {
         if (value.isEmpty) {
           _loginViewModel.changeIsDonePass(false);
@@ -167,9 +190,10 @@ class LoginView extends StatelessWidget {
       onFieldSubmitted: (String pass) {
         _loginViewModel.setUserPass(_passController.text);
         _loginViewModel.checkDoneAll();
-        //Info: キーボードを閉じる
+        // Info: キーボードを閉じる
         FocusScope.of(context).unfocus();
       },
+      // Info: validatorより先に呼ばれて、isDoneAllチェックしてしまう
       onChanged: (String pass) {
         _loginViewModel.setUserPass(_passController.text);
         _loginViewModel.checkDoneAll();
@@ -178,6 +202,7 @@ class LoginView extends StatelessWidget {
   }
 
   // Todo: リリース時は使用しないこと
+  // Info: isIndicateDeleteButton == trueならアカウント削除ボタン表示(Debugモード)
   Widget _debugBuildLoginButtonWithDeleteAccount(BuildContext context, bool isIndicateDeleteButton) {
     if (isIndicateDeleteButton) {
       return Column(
@@ -262,7 +287,7 @@ class LoginView extends StatelessWidget {
                 ),
                 onPressed: () {
                   // BackGroundAnimation再開
-                  _animationModel.stopAnimation(false);
+                  _animationModel.changeAnimationState(BackGroundAnimationState.RUNNING);
                   // 自身のダイアログスタック削除
                   Navigator.of(context).pop();
                 },
@@ -287,7 +312,7 @@ class LoginView extends StatelessWidget {
 
   void _onTapRegisterOrLoginButton(BuildContext context) {
     // BackGroundAnimation停止
-    _animationModel.stopAnimation(true);
+    _animationModel.changeAnimationState(BackGroundAnimationState.PAUSE);
     // 初回ログインのみアカウント登録可否ダイアログ表示
     if (_loginViewModel.isRegisterAccount) {
       /// アカウント作成時
@@ -297,7 +322,7 @@ class LoginView extends StatelessWidget {
       //Todo: Widgetを作ってFutureBuilderでCircleIndicatorかダイアログを返すようにする
       _loginViewModel.checkMatchAccount(_nameController.text, _passController.text)
           .then((bool) {
-            if (bool) Navigator.of(context).pushReplacementNamed('/base');
+            if (bool) Navigator.pushReplacementNamed(context, '/base');
 //            if (!bool) ;
       });
     }
@@ -310,10 +335,11 @@ class LoginView extends StatelessWidget {
         .then((value) {
           // 登録済みであることをセット
           _loginViewModel.setIsFirstLogin(false);
-          // 画面遷移
-          Navigator.of(context).pushReplacementNamed('/base');
-    })
-        .catchError((e) => debugPrint('アカウントを正常に登録できませんでした。(エラー内容:$e)}')
+          // ダイアログ削除
+          Navigator.pop(context);
+          // BaseViewへ画面遷移
+          Navigator.pushReplacementNamed(context, '/base');
+        }).catchError((e) => debugPrint('アカウントを正常に登録できませんでした。(エラー内容:$e)}')
     );
   }
 

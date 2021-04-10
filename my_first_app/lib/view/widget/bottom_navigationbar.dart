@@ -23,7 +23,7 @@ class BottomNavigationBarItems extends StatelessWidget {
 //      height: 0,
       child: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: _settingViewModel.isDarkMode ? Colors.black : Colors.blue,
+          canvasColor: _settingViewModel.isDarkMode ? Colors.grey : Colors.blueGrey.withOpacity(0.7),
         ),
         child: Selector<BaseViewModel,DataBaseState>(
           selector: (context, model) => model.getState,
@@ -33,6 +33,7 @@ class BottomNavigationBarItems extends StatelessWidget {
             return IgnorePointer(
               ignoring: state == DataBaseState.STOP ? false : true,
               child: BottomNavigationBar(
+                elevation: 0.0,
                 items: const <BottomNavigationBarItem> [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.home),

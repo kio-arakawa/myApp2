@@ -1,23 +1,21 @@
 import 'dart:async';
 
 import 'package:my_first_app/constants.dart';
-import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
-import 'package:my_first_app/model/moor_db.dart';
 
 class BaseViewModel extends ChangeNotifierModel{
 
-  ///Constructor
-  //private constructor
-  BaseViewModel._();
-
-  static BaseViewModel _baseViewModel;
-
-  factory BaseViewModel() {
-    _baseViewModel ??= BaseViewModel._();
-    return _baseViewModel;
-  }
+//  ///Constructor
+//  //private constructor
+//  BaseViewModel._();
+//
+//  static BaseViewModel _baseViewModel;
+//
+//  factory BaseViewModel() {
+//    _baseViewModel ??= BaseViewModel._();
+//    return _baseViewModel;
+//  }
 
   //AppBarTitle
   String appBarTitle = 'Home';
@@ -33,6 +31,15 @@ class BaseViewModel extends ChangeNotifierModel{
 
   //BaseViewフェードインフラグ
   bool isStartFadeIn = false;
+
+  // DarkModeかどうか
+  static bool _isCurrentDarkMode = false;
+  void setIsCurrentDarkMode(bool isDark) {
+    _isCurrentDarkMode = isDark;
+  }
+  bool getIsCurrentDarkMode() {
+    return _isCurrentDarkMode;
+  }
 
   //今どのページにいるかのフラグ（初期値HOME）
   static PageName _pageName;

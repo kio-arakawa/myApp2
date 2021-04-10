@@ -1,14 +1,29 @@
-import 'package:flutter/material.dart';
+import 'package:my_first_app/view_model/change_notifier_model.dart';
 
-class AnimationModel extends ChangeNotifier {
+// LoginViewのBackGroundAnimation状態
+enum BackGroundAnimationState {
+  // アニメーション中
+  RUNNING,
+  // 停止中
+  PAUSE,
+}
+
+class AnimationModel extends ChangeNotifierModel {
+
+  AnimationModel._();
+  static AnimationModel _instance;
+  factory AnimationModel() {
+    return _instance ??= AnimationModel._();
+  }
 
   ///Variable
   //アニメーション停止フラグ
-  bool _isAnimationStop = false;
-  bool get getAnimationState => _isAnimationStop;
+  BackGroundAnimationState _backGroundAnimationState;
+  BackGroundAnimationState get getBackGroundAnimationState => _backGroundAnimationState;
 
-  void stopAnimation(bool value) {
-    _isAnimationStop = value;
+  // BackGroundAnimation状態の変更通知
+  void changeAnimationState(BackGroundAnimationState state) {
+    _backGroundAnimationState = state;
     notifyListeners();
   }
 

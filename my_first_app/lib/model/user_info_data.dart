@@ -10,11 +10,9 @@ class UserInfoData {
   //Key: UserPass
   static const String USER_PASS = 'user_pass';
 
-  ///Constructor
+  ///Constructor(Singleton)
   UserInfoData._();
-
   static UserInfoData _userInfoData;
-
   factory UserInfoData() {
     _userInfoData ??= UserInfoData._();
     return _userInfoData;
@@ -78,17 +76,24 @@ class UserInfoData {
   
   /// Delete Account
   Future<bool> deleteAccount() async {
+    // SharedPrefのインスタンスGet
     final prefs = await _getSharedPrefInstance();
+    // 登録名と登録パスワードがあるかチェック
     if ( (prefs.getString(USER_NAME) != null) && (prefs.getString(USER_PASS) != null) ) {
+      // 登録名とパスワードが正常に削除できたかのフラグリスト
       List<bool> futureList = [];
+      // エラーフラグを初期化
       bool isError = false;
+      // SharedPrefから登録名と登録パスワードを削除
       futureList.add(await prefs.remove(USER_NAME).catchError((e) => isError = true));
       futureList.add(await prefs.remove(USER_PASS).catchError((e) => isError = true));
       while (true) {
+        // エラーが１つでもあればfalseで抜ける
         if (isError == true) {
           debugPrint('何らかのエラーが発生し削除できませんでした。');
           return false;
         }
+        // 2つとも削除できたらtrueで抜ける
         if (futureList.length == 2 || futureList.length > 2) {
           debugPrint('アカウントを削除しました！');
           return true;

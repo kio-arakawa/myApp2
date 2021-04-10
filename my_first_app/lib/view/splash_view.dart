@@ -10,8 +10,8 @@ class SplashView extends StatefulWidget {
   SplashView(this._baseViewModel, this._settingViewModel);
 
   ///Variable
-  BaseViewModel _baseViewModel;
-  SettingViewModel _settingViewModel;
+  final BaseViewModel _baseViewModel;
+  final SettingViewModel _settingViewModel;
 
   @override
   _SplashViewState createState() => _SplashViewState();
@@ -26,6 +26,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin{
 
   @override
   void initState() {
+    debugPrint('splashViewBuild');
     super.initState();
 
     //文字アニメーション用controller初期化(初回起動時のみ)
@@ -67,7 +68,6 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('splashViewBuild');
     return AnimatedOpacity(
       duration: Duration(milliseconds: 1000),
       opacity: widget._baseViewModel.isStartFadeOut ? 0.0 : 1.0,

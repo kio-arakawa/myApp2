@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/view_model/base_view_model.dart';
 
 import 'package:my_first_app/view_model/change_notifier_model.dart';
 
-class SettingViewModel extends ChangeNotifierModel {
+class SettingViewModel extends BaseViewModel {
 
   ///Constructor
   //private constructor
@@ -24,13 +25,23 @@ class SettingViewModel extends ChangeNotifierModel {
   bool isDebugMode = false;
 
   ///DarkMode切替時テーマビルドAPI
-  ThemeData buildTheme() => isDarkMode ? ThemeData.dark() : ThemeData.light();
-//  ? ThemeData(primaryColorBrightness: Brightness.dark)
-//      : ThemeData(primaryColorBrightness: Brightness.light);
+//  ThemeData buildTheme() => isDarkMode ? ThemeData.dark() : ThemeData.light();
+  ThemeData buildTheme() {
+    if (isDarkMode) {
+      return ThemeData.dark();
+    } else {
+      return ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.blueGrey,
+        accentColor: Colors.blueGrey,
+      );
+    }
+  }
 
   ///DarkModeフラグ変更API
   void changeDarkMode(bool value) {
     isDarkMode = value;
+    setIsCurrentDarkMode(value);
     isInitSplash = false;
     notifyListeners();
   }

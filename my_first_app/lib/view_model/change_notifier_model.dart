@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/model/data_base_model.dart';
 
-abstract class ChangeNotifierModel extends ChangeNotifier with DataBaseModel{
+abstract class ChangeNotifierModel extends ChangeNotifier with DataBaseModel {
 
   //MoorDBの通信状態(初期値STOP)
   DataBaseState _dataBaseState = DataBaseState.STOP;
