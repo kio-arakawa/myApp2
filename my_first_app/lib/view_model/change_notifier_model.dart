@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
-import 'package:my_first_app/model/data_base_model.dart';
+import 'package:my_first_app/model/db/data_base_model.dart';
 
 abstract class ChangeNotifierModel extends ChangeNotifier with DataBaseModel {
 
@@ -13,8 +13,10 @@ abstract class ChangeNotifierModel extends ChangeNotifier with DataBaseModel {
 
   //通信状態変更
   void setState(DataBaseState state) {
-    _dataBaseState = state;
-    notifyListeners();
+    if (_dataBaseState != state) {
+      _dataBaseState = state;
+      notifyListeners();
+    }
   }
 
   @override

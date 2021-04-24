@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+
 import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
-import 'package:my_first_app/view/lifecycle_manager.dart';
-import 'package:provider/provider.dart';
+import 'package:my_first_app/model/app_theme_model.dart';
+import 'package:my_first_app/my_enum/data_base_state.dart';
+import 'package:my_first_app/state/state_manager.dart';
 
-import 'package:my_first_app/view_model/setting_view_model.dart';
-
-class SettingView extends StatelessWidget {
+class SettingView extends HookWidget {
 
   ///Constructor
   SettingView({Key key}) : super(key: key);
@@ -23,50 +25,54 @@ class SettingView extends StatelessWidget {
     return SafeArea(
       child: Container(
         child: SingleChildScrollView(
-          child: Consumer<SettingViewModel>(
-            builder: (_,model,__) {
-              // contextをセット
-              model.setContext(context);
-//              model.setOSDarkTheme();
+          child: Consumer(
+            builder: (context, watch, _) {
+              final settingViewModel = watch(settingViewModelProvider);
+              final baseViewModel = watch(baseViewModelProvider);
+              final appThemeModel = watch(appThemeModelProvider);
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                baseViewModel.setState(DataBaseState.STOP);
+              });
               return Column(
                 children: <Widget>[
                   /// Developer Options
                   _createSectionContainer(
                     section: _createSectionTitle(
-                      model: model,
+                      appThemeModel: appThemeModel,
                       title: 'Developer Options',
                     ),
                     tiles: [
                       // Dark Mode
                       _createListTile(
-                        model: model,
+                        appThemeModel: appThemeModel,
                         isSwitchListTile: true,
                         icon: Icon(
                           Icons.lightbulb_outline,
-                          color: model.getIsCurrentDarkMode() ? Colors.yellow : Colors.black,
+                          color: appThemeModel.isAppThemeDarkNow() ? Colors.yellow : Colors.black,
                         ),
                         text: 'Dark Mode',
-                        value: model.getIsCurrentDarkMode(),
-                        function: (bool value) => model.changeDarkMode(value),
+                        value: appThemeModel.isAppThemeDarkNow(),
+//                        function: (bool value) => settingViewModel.changeDarkMode(value),
+                        function: (bool value) => appThemeModel.changeAppThemeColor(isDarkMode: value),
                       ),
                       // Debug Mode
                       _createListTile(
-                        model: model,
+                        appThemeModel: appThemeModel,
                         isSwitchListTile: true,
                         icon: Icon(
                           Icons.bug_report,
-                          color: model.isDebugMode ? Colors.green : Colors.black,
+                          color: settingViewModel.isDebugMode ? Colors.green : Colors.black,
                         ),
                         text: 'Debug Mode',
-                        value: model.isDebugMode,
-                        function: (bool value) => model.changeDebugMode(value),
+                        value: settingViewModel.isDebugMode,
+                        function: (bool value) => settingViewModel.changeDebugMode(value),
                       ),
                     ],
                   ),
                   /// User Setting
                   _createSectionContainer(
                     section: _createSectionTitle(
-                      model: model,
+                      appThemeModel: appThemeModel,
                       title: 'User Setting',
                     ),
                     tiles: [
@@ -74,11 +80,11 @@ class SettingView extends StatelessWidget {
                       Hero(
                         tag: Constants.profileHeroAnimTag,
                         child: _createListTile(
-                          model: model,
+                          appThemeModel: appThemeModel,
                           isSwitchListTile: false,
                           icon: Icon(
                             Icons.assignment_ind,
-                            color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+                            color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
                           ),
                           text: 'Setting Profile',
                           function: () {
@@ -88,22 +94,22 @@ class SettingView extends StatelessWidget {
                       ),
                       // 日記内容初期化
                       _createListTile(
-                        model: model,
+                        appThemeModel: appThemeModel,
                         isSwitchListTile: false,
                         icon: Icon(
                           Icons.autorenew,
-                          color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+                          color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
                         ),
                         text: 'Diary Information Initialization',
                         function: null,
                       ),
                       // LogOut
                       _createListTile(
-                        model: model,
+                        appThemeModel: appThemeModel,
                         isSwitchListTile: false,
                         icon: Icon(
                           Icons.logout,
-                          color: model.getIsCurrentDarkMode() ? Colors.black: Colors.black,
+                          color: appThemeModel.isAppThemeDarkNow() ? Colors.black: Colors.black,
                         ),
                         text: 'Log Out',
                         function: () {
@@ -116,16 +122,16 @@ class SettingView extends StatelessWidget {
                   /// Other
                   _createSectionContainer(
                     section: _createSectionTitle(
-                      model: model,
+                      appThemeModel: appThemeModel,
                       title: 'Other',
                     ),
                     tiles: [
                       _createListTile(
-                        model: model,
+                        appThemeModel: appThemeModel,
                         isSwitchListTile: false,
                         icon: Icon(
                           Icons.help,
-                          color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+                          color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
                         ),
                         text: 'Help',
                         function: null,
@@ -175,7 +181,7 @@ class SettingView extends StatelessWidget {
   }
 
   ///SectionTitleを生成
-  Widget _createSectionTitle({SettingViewModel model,String title}) {
+  Widget _createSectionTitle({AppThemeModel appThemeModel, String title}) {
     return Container(
         margin: EdgeInsets.only(
           left: 8.0,
@@ -188,7 +194,7 @@ class SettingView extends StatelessWidget {
             fontStyle: FontStyle.italic,
             fontWeight: FontWeight.bold,
             fontSize: 20,
-            color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+            color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
 //          decoration: TextDecoration.underline,
 //          decorationStyle: TextDecorationStyle.dotted,
           ),
@@ -198,7 +204,7 @@ class SettingView extends StatelessWidget {
 
   ///NormalListTileまたはSwitchListTileを生成
   Widget _createListTile({
-    SettingViewModel model,
+    AppThemeModel appThemeModel,
     bool isSwitchListTile,
     Icon icon,
     Icon subIcon,
@@ -226,7 +232,7 @@ class SettingView extends StatelessWidget {
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+                color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
                 fontSize: 18,
               ),
             ),
@@ -249,14 +255,14 @@ class SettingView extends StatelessWidget {
             trailing: FittedBox(
               child: Icon(
                 Icons.chevron_right,
-                color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+                color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
             ),
             ),
             title: Text(
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
+                color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.black,
                 fontSize: 18,
               ),
             ),

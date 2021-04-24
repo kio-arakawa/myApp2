@@ -10,12 +10,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:my_first_app/main.dart';
 import 'package:my_first_app/model/sync_data_base_model.dart';
-import 'package:my_first_app/model/my_shared_pref.dart';
+import 'package:my_first_app/model/db/my_shared_pref.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(MySharedPref(), SyncDataBaseModel(), false));
+    await tester.pumpWidget(MyApp(false));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

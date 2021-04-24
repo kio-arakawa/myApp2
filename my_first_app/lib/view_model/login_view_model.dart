@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/model/my_shared_pref.dart';
+import 'package:my_first_app/model/db/my_shared_pref.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
 
 class LoginViewModel extends BaseViewModel {
-
-  MySharedPref _mySharedPref;
 
   //初回登録かどうかのフラグ
   bool _isRegisterAccount = true;
@@ -39,9 +37,7 @@ class LoginViewModel extends BaseViewModel {
   void setUserPass(String pass) => _pass = pass;
 
   ///Constructor
-  LoginViewModel._() {
-    _mySharedPref = MySharedPref();
-  }
+  LoginViewModel._();
   static LoginViewModel _loginViewModel;
   factory LoginViewModel() {
     _loginViewModel ??= LoginViewModel._();
@@ -90,11 +86,11 @@ class LoginViewModel extends BaseViewModel {
   Future<bool> checkMatchAccount(String name, String pass) async {
     // ユーザー名とパスワードがnullでない時
     if ( (name != null) && (pass != null) ) {
-      if (name != await _mySharedPref.getUserName()) {
+      if (name != await mySharedPref.getUserName()) {
         debugPrint('ユーザー名またはパスワードが異なっています。');
         return false;
       }
-      if (pass != await _mySharedPref.getUserPass()) {
+      if (pass != await mySharedPref.getUserPass()) {
         debugPrint('パスワード名またはパスワードが異なっています。');
         return false;
       }
@@ -110,14 +106,14 @@ class LoginViewModel extends BaseViewModel {
   Future<bool> registerAccount(String name, String pass) async {
     // 正常に登録できたかのフラグリスト
     List<bool> futureList = [];
-    futureList.add(await _mySharedPref.setUserName(name));
-    futureList.add(await _mySharedPref.setUserPass(pass));
+    futureList.add(await mySharedPref.setUserName(name));
+    futureList.add(await mySharedPref.setUserPass(pass));
     return futureList.contains(false);
   }
 
   // アカウント削除
   Future<bool> deleteAccount() async {
-    return await _mySharedPref.deleteAccount();
+    return await mySharedPref.deleteAccount();
   }
 
 }

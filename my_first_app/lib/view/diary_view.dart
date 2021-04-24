@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+
 import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
-import 'package:my_first_app/model/moor_db.dart';
-import 'package:provider/provider.dart';
-
+import 'package:my_first_app/model/db/moor_db.dart';
 import 'package:my_first_app/my_enum/data_base_state.dart';
-import 'package:my_first_app/view_model/base_view_model.dart';
+import 'package:my_first_app/state/state_manager.dart';
 import 'package:my_first_app/view_model/diary_view_model.dart';
-import 'package:my_first_app/model/data_base_model.dart';
 import 'package:my_first_app/view/widget/bubble_border.dart';
 
-class DiaryView extends StatelessWidget {
-
-  final BaseViewModel _baseViewModel = BaseViewModel();
+class DiaryView extends HookWidget {
 
   ///Constructor
   DiaryView({Key key}) : super(key: key);
 
   void _initializer(BuildContext context) {
     DimensManager.dimensDiarySize.initialDimens<DiaryView>(context);
-    //BottomNavigationBarのロック
-//    _baseViewModel.setState(DataBaseState.CONNECTING);
-    //buildメソッドを抜けた＝＝通信が完了した
-    //→ BottomNavigationBarのロック解除
-//    WidgetsBinding.instance.addPostFrameCallback((cb) {
-//      _baseViewModel.setState(DataBaseState.STOP);
-//    });
   }
 
   @override
@@ -33,174 +24,171 @@ class DiaryView extends StatelessWidget {
     debugPrint('diaryViewBuild');
     _initializer(context);
     final TextEditingController textController = new TextEditingController();
-    final databaseStream = Provider.of<DataBaseModel>(context);
     //LoginViewに戻さない
     return WillPopScope(
       onWillPop: () async => true,
       //横画面の時用にSafeAreaでラップ
       child: SafeArea(
-        child: Container(
-          child: Consumer<ChatViewModel>(
-            builder: (_,model,__) {
-              // contextをセット
-              model.setContext(context);
-              return Container(
-                // 高さを指定しないと、タイムラインが空白の時テキストボックス＆送信ボタンWidgetができる限り小さくなろうとする
-                // すなわち、Positionedでbottomを0指定していても無効化される
-                height: DimensManager.dimensDiarySize.viewBaseHeight,
-                margin: EdgeInsets.only(top: DimensManager.dimensDiarySize.diaryListTopMargin),
-                child: StreamBuilder(
-                  initialData: DataBaseState.STOP,
-                  stream: databaseStream.state,
-                  builder: (BuildContext context, AsyncSnapshot<DataBaseState> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.done) {
-                      if (model.getState == DataBaseState.STOP) {
-                        return Stack(
-                          children: <Widget>[
+        child: Consumer(
+          builder: (context, watch, _) {
+            final chatViewModel = watch(diaryViewModelProvider);
+            final baseViewModel = watch(baseViewModelProvider);
+            final appThemeModel = watch(appThemeModelProvider);
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              baseViewModel.setState(DataBaseState.STOP);
+            });
+            return Container(
+              // 高さを指定しないと、タイムラインが空白の時テキストボックス＆送信ボタンWidgetができる限り小さくなろうとする
+              // すなわち、Positionedでbottomを0指定していても無効化される
+              height: DimensManager.dimensDiarySize.viewBaseHeight,
+              margin: EdgeInsets.only(top: DimensManager.dimensDiarySize.diaryListTopMargin),
+              //LoginViewに戻さない
+              child: StreamBuilder(
+                initialData: DataBaseState.STOP,
+                stream: chatViewModel.state,
+                builder: (BuildContext context, AsyncSnapshot<DataBaseState> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.done) {
+                    if (chatViewModel.getState == DataBaseState.STOP) {
+                      return Stack(
+                        children: <Widget>[
 
-                            ///チャットタイムライン
-                            FutureBuilder(
-                              future: model.getFutureData(),
-                              builder: (_, AsyncSnapshot<List<MoorDataBase>> snapshot) {
-                                debugPrint('data:${snapshot.data}');
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  //BottomNavigationロック
-//                              _baseViewModel.setState(DataBaseState.CONNECTING);
-                                  // Info: 小さなぐるぐるを出さないように、1s間delayする
-                                  return FutureBuilder(
-                                    future: Future.delayed(Duration(milliseconds: Constants.circleProgressIndicatorBuildWaitTime)),
-                                    builder: (_, delayTime) {
-                                      if (delayTime.connectionState == ConnectionState.done) {
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    },
-                                  );
-                                } else {
-                                  if (snapshot.hasData) {
-                                    //BottomNavigationロック
-//                                _baseViewModel.setState(DataBaseState.STOP);
-                                    return ListView.builder(
-                                      padding: EdgeInsets.only(bottom: DimensManager.dimensDiarySize.diaryListBottomMargin),
-                                      //ListViewの大きさ自動調整ON(たまに出るエラーを防ぐため)
-                                      shrinkWrap: true,
-                                      itemCount: snapshot.data.length,
-                                      itemBuilder: (_, int widgetId) {
-                                        return snapshot.data.isNotEmpty
-                                            ? _chatWidget(model, snapshot.data[widgetId])
-                                            : Container()
-                                        ;
-                                      },
-                                    );
-                                  }
-                                  //BottomNavigationロック
-//                              _baseViewModel.setState(DataBaseState.CONNECTING);
-                                  // Info: 小さなぐるぐるを出さないように、1s間delayする
-                                  return FutureBuilder(
-                                    future: Future.delayed(Duration(milliseconds: Constants.circleProgressIndicatorBuildWaitTime)),
-                                    builder: (_, delayTime) {
-                                      if (delayTime.connectionState == ConnectionState.done) {
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
+                          ///チャットタイムライン
+                          FutureBuilder(
+                            future: chatViewModel.getFutureData(),
+                            builder: (_, AsyncSnapshot<List<MoorDataBase>> snapshot) {
+                              debugPrint('data:${snapshot.data}');
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                // Info: 小さなぐるぐるを出さないように、1s間delayする
+                                return FutureBuilder(
+                                  future: Future.delayed(Duration(milliseconds: Constants.circleProgressIndicatorBuildWaitTime)),
+                                  builder: (_, delayTime) {
+                                    if (delayTime.connectionState == ConnectionState.done) {
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                );
+                              } else {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                    padding: EdgeInsets.only(bottom: DimensManager.dimensDiarySize.diaryListBottomMargin),
+                                    //ListViewの大きさ自動調整ON(たまに出るエラーを防ぐため)
+                                    shrinkWrap: true,
+                                    itemCount: snapshot.data.length,
+                                    itemBuilder: (_, int widgetId) {
+                                      return snapshot.data.isNotEmpty
+                                          ? _chatWidget(chatViewModel, snapshot.data[widgetId])
+                                          : Container()
+                                      ;
                                     },
                                   );
                                 }
-                              },
-                            ),
+                                // Info: 小さなぐるぐるを出さないように、1s間delayする
+                                return FutureBuilder(
+                                  future: Future.delayed(Duration(milliseconds: Constants.circleProgressIndicatorBuildWaitTime)),
+                                  builder: (_, delayTime) {
+                                    if (delayTime.connectionState == ConnectionState.done) {
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                                        ),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                );
+                              }
+                            },
+                          ),
 
-                            ///テキストボックスと登録ボタン
-                            Positioned(
-                              height: DimensManager.dimensDiarySize.inputTextBoxAndRegisterButtonContainerHeight,  ///0.075
-                              left: DimensManager.dimensDiarySize.zero,
-                              right: DimensManager.dimensDiarySize.zero,
-                              bottom: DimensManager.dimensDiarySize.zero,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: model.getIsCurrentDarkMode() ? Colors.grey.withOpacity(0.95): Colors.white.withOpacity(0.95),
-                                ),
-                                child: Stack(
-                                  children: <Widget>[
+                          ///テキストボックスと登録ボタン
+                          Positioned(
+                            height: DimensManager.dimensDiarySize.inputTextBoxAndRegisterButtonContainerHeight,  ///0.075
+                            left: DimensManager.dimensDiarySize.zero,
+                            right: DimensManager.dimensDiarySize.zero,
+                            bottom: DimensManager.dimensDiarySize.zero,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: appThemeModel.isAppThemeDarkNow()
+                                    ? Colors.grey.withOpacity(0.95)
+                                    : Colors.white.withOpacity(0.95),
+                              ),
+                              child: Stack(
+                                children: <Widget>[
 
-                                    ///テキストフォーム
-                                    Positioned(
-                                      height: DimensManager.dimensDiarySize.inputTextBoxHeight,
-                                      width: DimensManager.dimensDiarySize.inputTextBoxWidth,
-                                      left: DimensManager.dimensDiarySize.inputTextBoxMarginLeft,
-                                      child: Center(
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(color: Colors.grey),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(color: Colors.black),
-                                            ),
+                                  ///テキストフォーム
+                                  Positioned(
+                                    height: DimensManager.dimensDiarySize.inputTextBoxHeight,
+                                    width: DimensManager.dimensDiarySize.inputTextBoxWidth,
+                                    left: DimensManager.dimensDiarySize.inputTextBoxMarginLeft,
+                                    child: Center(
+                                      child: TextFormField(
+                                        decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.grey),
                                           ),
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.black),
+                                          ),
+                                        ),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                        controller: textController,
+                                      ),
+                                    ),
+                                  ),
+
+                                  ///登録ボタン
+                                  Positioned(
+                                    height: DimensManager.dimensDiarySize.registerButtonHeight,
+                                    width: DimensManager.dimensDiarySize.registerButtonWidth,
+                                    top: DimensManager.dimensDiarySize.registerButtonMarginTop,
+                                    right: DimensManager.dimensDiarySize.registerButtonMarginRight,
+                                    child: RaisedButton(
+                                      color: Colors.grey,
+                                      shape: StadiumBorder(),
+                                      onPressed: () {
+                                        //通信中はBottomNavigationロック
+                                        baseViewModel.setState(DataBaseState.CONNECTING);
+                                        /// 登録ボタン押下時Action
+                                        chatViewModel.onTapRegisterButton(textController);
+                                      },
+                                      child: FittedBox(
+                                        child: Text(
+                                          '記録',
                                           style: TextStyle(
-                                            color: Colors.black,
+                                            fontSize: DimensManager.dimensDiarySize.registerButtonTextSize,
                                           ),
-                                          controller: textController,
+                                          maxLines: 1,
                                         ),
                                       ),
                                     ),
-
-                                    ///登録ボタン
-                                    Positioned(
-                                      height: DimensManager.dimensDiarySize.registerButtonHeight,
-                                      width: DimensManager.dimensDiarySize.registerButtonWidth,
-                                      top: DimensManager.dimensDiarySize.registerButtonMarginTop,
-                                      right: DimensManager.dimensDiarySize.registerButtonMarginRight,
-                                      child: RaisedButton(
-                                        color: Colors.grey,
-                                        shape: StadiumBorder(),
-                                        onPressed: () {
-                                          //通信中はBottomNavigationロック
-//                                    _baseViewModel.setState(DataBaseState.CONNECTING);
-                                          /// 登録ボタン押下時Action
-                                          model.onTapRegisterButton(textController);
-//                                    model.setChatWidget(++model.listIndex, _chatWidget(model, sizeWidth));
-                                        },
-                                        child: FittedBox(
-                                          child: Text(
-                                            '記録',
-                                            style: TextStyle(
-                                              fontSize: DimensManager.dimensDiarySize.registerButtonTextSize,
-                                            ),
-                                            maxLines: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
+                          ),
 
-                          ],
-                        );
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-
+                        ],
+                      );
                     } else {
                       return Center(child: CircularProgressIndicator());
                     }
-                  },
-                ),
-              );
-            },
-          ),
+
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            );
+          },
         ),
       ),
     );

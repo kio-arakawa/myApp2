@@ -1,51 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/model/sync_data_base_model.dart';
-import 'package:my_first_app/model/my_shared_pref.dart';
-import 'package:my_first_app/view/lifecycle_manager.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:my_first_app/view/widget/bottom_navigationbar.dart';
+import 'package:my_first_app/state/state_manager.dart';
+import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:my_first_app/view/lifecycle_manager.dart';
+import 'package:my_first_app/view_model/base_view_model.dart';
 import 'package:my_first_app/view/home_view.dart';
 import 'package:my_first_app/view/setting_view.dart';
 import 'package:my_first_app/view/diary_view.dart';
 import 'package:my_first_app/view/history_view.dart';
-import 'package:my_first_app/view_model/base_view_model.dart';
-import 'package:my_first_app/view_model/setting_view_model.dart';
-import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:my_first_app/view/widget/bottom_navigationbar.dart';
 
-class BaseView extends StatelessWidget {
+class BaseView extends HookWidget {
 
   ///Constructor(Singleton)
-  BaseView._(this._settingViewModel, this._mySharedPref, this._syncDataBaseModel);
+  BaseView._();
   static BaseView _baseView;
-  factory BaseView(SettingViewModel settingViewModel, MySharedPref mySharedPref, SyncDataBaseModel syncDataBaseModel) {
-    return _baseView ??= BaseView._(settingViewModel, mySharedPref, syncDataBaseModel);
+  factory BaseView() {
+    return _baseView ??= BaseView._();
   }
 
   ///Variable
-  final SettingViewModel _settingViewModel;
-  final MySharedPref _mySharedPref;
-  final SyncDataBaseModel _syncDataBaseModel;
-  final LifecycleCallback _lifecycleCallback = LifecycleCallback();
+  final BaseViewModel _baseViewModel = BaseViewModel();
 
   ///BottomNavigationBarの遷移ページリスト
   static List<Widget> _pageList = [
-    HomeView(SettingViewModel()),
+    HomeView(),
     DiaryView(),
-    HistoryView(SyncDataBaseModel(), MySharedPref()),
+    HistoryView(),
     SettingView(),
   ];
 
   void _initializer(BuildContext context) async {
-    _settingViewModel.setContext(context);
+//    _settingViewModel.setContext(context);
     // Dimensクラス初期処理
     DimensManager.dimensHomeSize.initialDimens<HomeView>(context);
     // ユーザー名・パスワードをSyncModelにセット
-    await _syncDataBaseModel.setUserNameIntoSync(_mySharedPref.getUserName());
-    await _syncDataBaseModel.setUserPassIntoSync(_mySharedPref.getUserPass());
+    await _baseViewModel.syncDataBaseModel.setUserNameIntoSync(_baseViewModel.mySharedPref.getUserName());
+    await _baseViewModel.syncDataBaseModel.setUserPassIntoSync(_baseViewModel.mySharedPref.getUserPass());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // OSのテーマカラーをチェック
-      _settingViewModel.setOSDarkTheme(notNotify: false);
+//      _settingViewModel.setOSDarkTheme(notNotify: false);
     });
   }
 
@@ -55,30 +51,26 @@ class BaseView extends StatelessWidget {
     //初期設定
     _initializer(context);
     return LifecycleManager(
-      callback: _lifecycleCallback,
       // OSのテーマカラーがライトモードになった時
       osLightThemeCallBack: () {
-        _settingViewModel.changeOsDarkMode(false);
+//        _settingViewModel.changeOsDarkMode(false);
       },
       // OSのテーマカラーがダークモードになった時
       osDarkThemeCallBack: () {
-        _settingViewModel.changeOsDarkMode(true);
+//        _settingViewModel.changeOsDarkMode(true);
       },
       child: Container(
         height: DimensManager.dimensHomeSize.fullHeight,
         width: DimensManager.dimensHomeSize.fullWidth,
-//      color: Colors.black, //StatusBarとBottomStatusBarの背景色
-        child: _settingViewModel.isDebugMode
-            ? _debugBuilder()
-            : _normalBuilder(),
+        child: _buildBody(),
       ),
     );
   }
 
-  ///本当のbuildメソッドの中身(Debug中は基本的にOFFにして下のbuildメソッドを使用する)
-  Widget _normalBuilder() {
-    return Consumer<BaseViewModel>(
-      builder: (_,model,__) {
+  Widget _buildBody() {
+    return Consumer(
+      builder: (context, watch, _) {
+        final baseViewModel = watch(baseViewModelProvider);
         return Scaffold(
           extendBodyBehindAppBar: true,
           extendBody: true,
@@ -88,36 +80,12 @@ class BaseView extends StatelessWidget {
             child: AppBar(
               backgroundColor: Colors.blueGrey.withOpacity(0.7),
               centerTitle: true,
-              title: Text(model.appBarTitle),
+              title: Text(baseViewModel.appBarTitle),
               leading: Container(),
             ),
           ),
-          body:_pageList[model.selectedIndex],
-          bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
-        );
-      },
-    );
-  }
-
-  /// Debug用のbuildメソッドの中身(リビルドするとSplashViewのアニメーションがうまく動作せずいちいちホットリスタートしなければならないため)
-  Widget _debugBuilder() {
-    return Consumer<BaseViewModel>(
-      builder: (_,model,__) {
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          extendBody: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
-            child: AppBar(
-              backgroundColor: Colors.blueGrey.withOpacity(0.7),
-              elevation: 10.0,
-              centerTitle: true,
-              title: Text(model.appBarTitle),
-             leading: Container(),
-            ),
-          ),
-          body:_pageList[model.selectedIndex],
-          bottomNavigationBar: BottomNavigationBarItems(model, _settingViewModel),
+          body:_pageList[baseViewModel.selectedIndex],
+          bottomNavigationBar: BottomNavigationBarItems(),
         );
       },
     );

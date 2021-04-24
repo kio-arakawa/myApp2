@@ -22,7 +22,7 @@ class AnimationModel extends ChangeNotifierModel {
   BackGroundAnimationState get getBackGroundAnimationState => _backGroundAnimationState;
 
   // BackGroundAnimation状態の変更通知
-  void changeAnimationState(BackGroundAnimationState state) {
+  void changeBackGroundAnimationState(BackGroundAnimationState state) {
     _backGroundAnimationState = state;
     notifyListeners();
   }

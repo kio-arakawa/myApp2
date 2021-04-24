@@ -45,7 +45,7 @@ class DimensDiary extends DimensBase {
 
   @override
   void calculatorRatio<DiaryView>() {
-    inputTextBoxAndRegisterButtonContainerHeight = viewBaseHeight * 0.075;
+    inputTextBoxAndRegisterButtonContainerHeight = viewBaseHeight * 0.08;
     diaryListBottomMargin = inputTextBoxAndRegisterButtonContainerHeight;
     diaryListTopMargin = viewBaseHeight * 0.005;
     inputTextBoxHeight = inputTextBoxAndRegisterButtonContainerHeight;

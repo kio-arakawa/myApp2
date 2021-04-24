@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import 'package:my_first_app/dimens/dimens_manager.dart';
-import 'package:my_first_app/model/sync_data_base_model.dart';
-import 'package:my_first_app/model/my_shared_pref.dart';
-import 'package:my_first_app/view_model/history_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:my_first_app/my_enum/data_base_state.dart';
+import 'package:my_first_app/state/state_manager.dart';
 
-class HistoryView extends StatelessWidget {
-
-  /// Variable
-  final SyncDataBaseModel _syncDataBaseModel;
-  final MySharedPref _mySharedPref;
+class HistoryView extends HookWidget {
 
   ///Constructor
-  HistoryView(this._syncDataBaseModel, this._mySharedPref);
+  HistoryView();
 
   void _initializer(BuildContext context) {
     DimensManager.dimensHistoryViewSize.initialDimens<HistoryView>(context);
@@ -20,7 +17,6 @@ class HistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HistoryViewModel historyViewModel = HistoryViewModel();
     debugPrint('historyViewBuild');
     _initializer(context);
     // Info: LoginViewに戻さない
@@ -28,37 +24,40 @@ class HistoryView extends StatelessWidget {
       onWillPop: () async => true,
       //横画面の時用にSafeAreaでラップ
       child: SafeArea(
-        child: Consumer<HistoryViewModel>(
-          builder: (_, historyViewModel,__) {
-            // contextをセット
-            historyViewModel.setContext(context);
-//            historyViewModel.setOSDarkTheme();
+        child: Consumer(
+          builder: (context, watch, _) {
+            final historyViewModel = watch(historyViewModelProvider);
+            final baseViewModel = watch(baseViewModelProvider);
+            final appThemeModel = watch(appThemeModelProvider);
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              baseViewModel.setState(DataBaseState.STOP);
+            });
             return Container(
               child: SingleChildScrollView(
                 child: Center(
                   child: Column(
                     children: <Widget>[
                       Text(
-                        'ユーザー名：${_syncDataBaseModel.getUserNameFromSync()}',
+                        'ユーザー名：${historyViewModel.syncDataBaseModel.getUserNameFromSync()}',
                         style: TextStyle(
                           fontSize: 20,
-                          color: historyViewModel.getIsCurrentDarkMode() ? Colors.white : Colors.black
+                          color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black
                         ),
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        'パスワード：${_syncDataBaseModel.getUserPassFromSync()}',
+                        'パスワード：${historyViewModel.syncDataBaseModel.getUserPassFromSync()}',
                         style: TextStyle(
                             fontSize: 20,
-                            color: historyViewModel.getIsCurrentDarkMode() ? Colors.white : Colors.black
+                            color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black
                         ),
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        '今ダークモード？：${historyViewModel.getIsCurrentDarkMode()}',
+                        '今ダークモード？：${appThemeModel.isAppThemeDarkNow()}',
                         style: TextStyle(
                             fontSize: 20,
-                            color: historyViewModel.getIsCurrentDarkMode() ? Colors.white : Colors.black
+                            color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -66,7 +65,7 @@ class HistoryView extends StatelessWidget {
                         'OSはダークモード？：${historyViewModel.isOSDarkMode}',
                         style: TextStyle(
                             fontSize: 20,
-                            color: historyViewModel.getIsCurrentDarkMode() ? Colors.white : Colors.black
+                            color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black
                         ),
                         textAlign: TextAlign.center,
                       ),

@@ -1,21 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_first_app/view/lifecycle_manager.dart';
-import 'package:my_first_app/view_model/setting_view_model.dart';
-import 'package:provider/provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_first_app/my_enum/data_base_state.dart';
+import 'package:my_first_app/state/state_manager.dart';
 
+import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
 import 'package:my_first_app/view/widget/custom_card_widget.dart';
-import 'package:my_first_app/view_model/home_view_model.dart';
-import 'package:my_first_app/constants.dart';
 
-class HomeView extends StatelessWidget {
-
-  final LifecycleCallback _lifecycleCallback = LifecycleCallback();
-  final SettingViewModel _settingViewModel;
+class HomeView extends HookWidget {
 
   ///Constructor
-  HomeView(this._settingViewModel);
+  HomeView();
 
   void _initializer(BuildContext context) {
     DimensManager.dimensHomeSize.initialDimens<HomeView>(context);
@@ -39,10 +36,13 @@ class HomeView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   ///日付表示
-                  Consumer<HomeViewModel>(
-                    builder: (_,model,__) {
-                      // contextをセット
-                      model.setContext(context);
+                  Consumer(
+                    builder: (context, watch, _) {
+                      final homeViewModel = watch(homeViewModelProvider);
+                      final baseViewModel = watch(baseViewModelProvider);
+                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                        baseViewModel.setState(DataBaseState.STOP);
+                      });
                       return CustomCardWidget(
                         isCard: false,
                         cardColor: Colors.white,
@@ -53,7 +53,7 @@ class HomeView extends StatelessWidget {
                               Icons.access_alarms,
                             ),
                             Text(
-                              '  ${model.getDateTime()}',
+                              '  ${homeViewModel.getDateTime()}',
                               style: TextStyle(
                                 fontStyle: FontStyle.italic,
                                 fontWeight: FontWeight.bold,

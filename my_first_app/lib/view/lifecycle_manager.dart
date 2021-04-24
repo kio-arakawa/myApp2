@@ -9,6 +9,8 @@ class LifecycleCallback {
       VoidCallback osDarkThemeCallBack
       )
   {
+    // Info: Buildメソッド完了後にCallする。
+    //       didChangeAppLifecycleStateメソッド内でCallすると古いcontextでBrightnessを取得してしまう。
     final Brightness platformBrightness = MediaQuery.platformBrightnessOf(context);
     // OSのテーマカラーがライトモード
     if (platformBrightness == Brightness.light) {
@@ -33,7 +35,7 @@ class LifecycleCallback {
 class LifecycleManager extends StatefulWidget {
 
   final Widget child;
-  final LifecycleCallback callback;
+  final LifecycleCallback callback = LifecycleCallback();
   final BuildContext context;
   final VoidCallback osLightThemeCallBack;
   final VoidCallback osDarkThemeCallBack;
@@ -41,7 +43,6 @@ class LifecycleManager extends StatefulWidget {
   LifecycleManager({
     Key key,
     this.child,
-    this.callback,
     this.context,
     this.osLightThemeCallBack,
     this.osDarkThemeCallBack,
@@ -52,6 +53,8 @@ class LifecycleManager extends StatefulWidget {
 
 class _LifeCycleManagerState extends State<LifecycleManager>
     with WidgetsBindingObserver {
+
+  bool _isNeedCheck = false;
 
   @override
   void initState() {
@@ -70,17 +73,14 @@ class _LifeCycleManagerState extends State<LifecycleManager>
     debugPrint('state = $state');
     switch (state) {
       case AppLifecycleState.resumed:
-        widget.callback?.onResumed(
-            context,
-            widget.osLightThemeCallBack,
-            widget.osDarkThemeCallBack,
-        );
         break;
       case AppLifecycleState.inactive:
         widget.callback?.onInactive();
+        _isNeedCheck = true;
         break;
       case AppLifecycleState.paused:
         widget.callback?.onPaused();
+        _isNeedCheck = true;
         break;
       case AppLifecycleState.detached:
         widget.callback?.onDetached();
@@ -88,8 +88,22 @@ class _LifeCycleManagerState extends State<LifecycleManager>
     }
   }
 
+  void _onBuildComplete() {
+    if(_isNeedCheck) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        widget.callback?.onResumed(
+          context,
+          widget.osLightThemeCallBack,
+          widget.osDarkThemeCallBack,
+        );
+        _isNeedCheck = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+//    _onBuildComplete();
     return Container(
       child: widget.child,
     );

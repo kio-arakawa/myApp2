@@ -3,7 +3,7 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
-import 'package:my_first_app/model/moor_db.dart';
+import 'package:my_first_app/model/db/moor_db.dart';
 
 class ChatViewModel extends BaseViewModel {
 

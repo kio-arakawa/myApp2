@@ -2,10 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:my_first_app/constants.dart';
+import 'package:my_first_app/model/db/my_shared_pref.dart';
+import 'package:my_first_app/model/sync_data_base_model.dart';
+import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
 
 class BaseViewModel extends ChangeNotifierModel {
+
+  Widget cacheWidget;
+
+  MySharedPref mySharedPref = MySharedPref();
+  SyncDataBaseModel syncDataBaseModel = SyncDataBaseModel();
 
   // BuildContext
   BuildContext _context;
@@ -57,6 +65,7 @@ class BaseViewModel extends ChangeNotifierModel {
 
   ///BottomNavigationBarでタップされたindexを元にAppBarのタイトル変更するAPI
   void onItemTapped(int index) {
+    setState(DataBaseState.CONNECTING);
     selectedIndex = index;
     _setAppBarTitle(index);
     switch(index) {
