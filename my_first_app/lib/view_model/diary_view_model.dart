@@ -44,7 +44,7 @@ class ChatViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future <List<MoorDataBase>> getFutureData() async {
+  Future<List<MoorDataBase>> getFutureData() async {
     return await _myDatabase.allDiaryEntries;
   }
 

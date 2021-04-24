@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/view_model/change_notifier_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
@@ -23,7 +22,7 @@ class BottomNavigationBarItems extends StatelessWidget {
 //      height: 0,
       child: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: _settingViewModel.isDarkMode ? Colors.grey : Colors.blueGrey.withOpacity(0.7),
+          canvasColor: _settingViewModel.getIsCurrentDarkMode() ? Colors.grey : Colors.blueGrey.withOpacity(0.7),
         ),
         child: Selector<BaseViewModel,DataBaseState>(
           selector: (context, model) => model.getState,
@@ -37,20 +36,20 @@ class BottomNavigationBarItems extends StatelessWidget {
                 items: const <BottomNavigationBarItem> [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.home),
-                    title: Text('Home'),
+                    label: 'Home',
 //                  backgroundColor: Colors.white,
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.edit),
-                    title: Text('Diary'),
+                    label: 'Diary',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.import_contacts),
-                    title: Text('History'),
+                    label: 'History',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.settings),
-                    title: Text('Setting'),
+                    label: 'Setting',
                   ),
                 ],
                 currentIndex: _model.selectedIndex,

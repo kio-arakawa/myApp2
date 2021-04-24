@@ -1,7 +1,12 @@
-import 'dart:ui';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class DimensBase {
+  // Platform
+  bool _ios = Platform.isIOS;
+  bool get isPlatformIos => _ios;
+  bool _android = Platform.isAndroid;
+  bool get isPlatformAndroid => _android;
   // Orientation情報
   Orientation currentOrientation;
 
@@ -10,8 +15,8 @@ class DimensBase {
 
   double fullHeight = 0;
   double fullWidth = 0;
-  double statusBarHeight = 0;
-  double homeIndicatorHeight = 0;
+  static double statusBarHeight = 0;
+  static double homeIndicatorHeight = 0;
   double fullHeightSafeArea = 0;
   double fullWidthSafeArea = 0;
   double headerHeight = 0;
@@ -39,8 +44,12 @@ class DimensBase {
     if (fullHeight == 0 && fullWidth == 0) {
       _isNeedReCalcRatio = true;
     }
-    /// 取れた値が0でない かつ 新旧で異なりがある時のみ更新（→ 全て計算する）
-    if ( (statusBarHeight == 0 && homeIndicatorHeight == 0) && (newStatusBarHeight != 0 && newHomeIndicatorHeight != 0) ) {
+    /// staticな値が0なら必ず再計算処理実行
+    // Info: Scaffoldのbody内のClassから、「MediaQuery.of(context).padding.[top][bottom]」
+    //       の値を取ると、描画できない値として取得してしまうので、再代入しないようにする必要がある
+    //       → すなわち、MediaQuery.of(context).padding.[top][bottom]メソッドは、
+    //       そのViewからは描画できない範囲の値を返すようになっていると考えられる
+    if ( (statusBarHeight == 0 && homeIndicatorHeight == 0)) {
       statusBarHeight = newStatusBarHeight;
       homeIndicatorHeight = newHomeIndicatorHeight;
       _isNeedReCalcRatio = true;
@@ -55,8 +64,10 @@ class DimensBase {
       // ⚠︎ScaffoldのAppBarプロパティのpreferredSizeを使用しているため、statusBarHeightは考慮しない
       headerHeight = fullHeightSafeArea * 0.08;
       // ⚠︎SizedBoxを使用する場合は、HomeIndicatorの高さを考慮する
-      bottomNavigationBarHeight = (fullHeightSafeArea * 0.08) + homeIndicatorHeight;
-      viewBaseHeight = fullHeight - (headerHeight + bottomNavigationBarHeight);
+      bottomNavigationBarHeight = isPlatformIos
+          ? (fullHeightSafeArea * 0.08) + homeIndicatorHeight
+          : (fullHeightSafeArea * 0.1) + homeIndicatorHeight;
+      viewBaseHeight = fullHeight - (headerHeight + statusBarHeight + bottomNavigationBarHeight);
       viewBaseWidth = fullWidth;
       debugPrint('CurrentOrientation:$currentOrientation, fullHeight:$fullHeight, fullWidth:$fullWidth, paddingTop:$statusBarHeight, paddingBottom:$homeIndicatorHeight, '
           'fullHeightSafeArea:$fullHeightSafeArea, fullWidthSafeArea:$fullWidthSafeArea');

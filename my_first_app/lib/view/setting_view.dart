@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
+import 'package:my_first_app/view/lifecycle_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/view_model/setting_view_model.dart';
@@ -21,20 +22,12 @@ class SettingView extends StatelessWidget {
     //横画面の時用にSafeAreaでラップ
     return SafeArea(
       child: Container(
-//        height: DimensManager.dimensSettingViewSize.fullHeight,
-//        decoration: BoxDecoration(
-//          gradient: LinearGradient(
-//            begin: FractionalOffset.topCenter,
-//            end: FractionalOffset.bottomCenter,
-//            colors: [
-//              Colors.white.withOpacity(1),
-//              Colors.grey.withOpacity(1),
-//            ],
-//          ),
-//        ),
         child: SingleChildScrollView(
           child: Consumer<SettingViewModel>(
             builder: (_,model,__) {
+              // contextをセット
+              model.setContext(context);
+//              model.setOSDarkTheme();
               return Column(
                 children: <Widget>[
                   /// Developer Options
@@ -50,10 +43,10 @@ class SettingView extends StatelessWidget {
                         isSwitchListTile: true,
                         icon: Icon(
                           Icons.lightbulb_outline,
-                          color: model.isDarkMode ? Colors.yellow : Colors.black,
+                          color: model.getIsCurrentDarkMode() ? Colors.yellow : Colors.black,
                         ),
                         text: 'Dark Mode',
-                        value: model.isDarkMode,
+                        value: model.getIsCurrentDarkMode(),
                         function: (bool value) => model.changeDarkMode(value),
                       ),
                       // Debug Mode
@@ -85,7 +78,7 @@ class SettingView extends StatelessWidget {
                           isSwitchListTile: false,
                           icon: Icon(
                             Icons.assignment_ind,
-                            color: model.isDarkMode ? Colors.black : Colors.black,
+                            color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
                           ),
                           text: 'Setting Profile',
                           function: () {
@@ -99,7 +92,7 @@ class SettingView extends StatelessWidget {
                         isSwitchListTile: false,
                         icon: Icon(
                           Icons.autorenew,
-                          color: model.isDarkMode ? Colors.black : Colors.black,
+                          color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
                         ),
                         text: 'Diary Information Initialization',
                         function: null,
@@ -110,7 +103,7 @@ class SettingView extends StatelessWidget {
                         isSwitchListTile: false,
                         icon: Icon(
                           Icons.logout,
-                          color: model.isDarkMode ? Colors.black: Colors.black,
+                          color: model.getIsCurrentDarkMode() ? Colors.black: Colors.black,
                         ),
                         text: 'Log Out',
                         function: () {
@@ -132,7 +125,7 @@ class SettingView extends StatelessWidget {
                         isSwitchListTile: false,
                         icon: Icon(
                           Icons.help,
-                          color: model.isDarkMode ? Colors.black : Colors.black,
+                          color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
                         ),
                         text: 'Help',
                         function: null,
@@ -195,7 +188,7 @@ class SettingView extends StatelessWidget {
             fontStyle: FontStyle.italic,
             fontWeight: FontWeight.bold,
             fontSize: 20,
-            color: model.isDarkMode ? Colors.black : Colors.black,
+            color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
 //          decoration: TextDecoration.underline,
 //          decorationStyle: TextDecorationStyle.dotted,
           ),
@@ -233,7 +226,7 @@ class SettingView extends StatelessWidget {
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: model.isDarkMode ? Colors.black : Colors.black,
+                color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
                 fontSize: 18,
               ),
             ),
@@ -256,14 +249,14 @@ class SettingView extends StatelessWidget {
             trailing: FittedBox(
               child: Icon(
                 Icons.chevron_right,
-                color: model.isDarkMode ? Colors.black : Colors.black,
+                color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
             ),
             ),
             title: Text(
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: model.isDarkMode ? Colors.black : Colors.black,
+                color: model.getIsCurrentDarkMode() ? Colors.black : Colors.black,
                 fontSize: 18,
               ),
             ),

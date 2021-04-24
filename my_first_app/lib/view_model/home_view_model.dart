@@ -3,8 +3,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
 
-import 'package:my_first_app/view_model/change_notifier_model.dart';
-
 class HomeViewModel extends BaseViewModel {
 
   ///Constructor

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
 import 'package:my_first_app/model/sync_data_base_model.dart';
-import 'package:my_first_app/model/user_info_data.dart';
+import 'package:my_first_app/model/my_shared_pref.dart';
 import 'package:my_first_app/view_model/history_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -9,10 +9,10 @@ class HistoryView extends StatelessWidget {
 
   /// Variable
   final SyncDataBaseModel _syncDataBaseModel;
-  final UserInfoData _userInfoData;
+  final MySharedPref _mySharedPref;
 
   ///Constructor
-  HistoryView(this._syncDataBaseModel, this._userInfoData);
+  HistoryView(this._syncDataBaseModel, this._mySharedPref);
 
   void _initializer(BuildContext context) {
     DimensManager.dimensHistoryViewSize.initialDimens<HistoryView>(context);
@@ -20,6 +20,7 @@ class HistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HistoryViewModel historyViewModel = HistoryViewModel();
     debugPrint('historyViewBuild');
     _initializer(context);
     // Info: LoginViewに戻さない
@@ -29,18 +30,10 @@ class HistoryView extends StatelessWidget {
       child: SafeArea(
         child: Consumer<HistoryViewModel>(
           builder: (_, historyViewModel,__) {
+            // contextをセット
+            historyViewModel.setContext(context);
+//            historyViewModel.setOSDarkTheme();
             return Container(
-//              height: DimensManager.dimensHistoryViewSize.fullHeight,
-//              decoration: BoxDecoration(
-//                gradient: LinearGradient(
-//                  begin: FractionalOffset.topCenter,
-//                  end: FractionalOffset.bottomCenter,
-//                  colors: [
-//                    Colors.white.withOpacity(1),
-//                    Colors.grey.withOpacity(1),
-//                  ],
-//                ),
-//              ),
               child: SingleChildScrollView(
                 child: Center(
                   child: Column(
@@ -63,6 +56,14 @@ class HistoryView extends StatelessWidget {
                       ),
                       Text(
                         '今ダークモード？：${historyViewModel.getIsCurrentDarkMode()}',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: historyViewModel.getIsCurrentDarkMode() ? Colors.white : Colors.black
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        'OSはダークモード？：${historyViewModel.isOSDarkMode}',
                         style: TextStyle(
                             fontSize: 20,
                             color: historyViewModel.getIsCurrentDarkMode() ? Colors.white : Colors.black

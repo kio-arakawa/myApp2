@@ -1,21 +1,25 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/my_enum/page_name.dart';
 import 'package:my_first_app/view_model/change_notifier_model.dart';
 
-class BaseViewModel extends ChangeNotifierModel{
+class BaseViewModel extends ChangeNotifierModel {
 
-//  ///Constructor
-//  //private constructor
-//  BaseViewModel._();
-//
-//  static BaseViewModel _baseViewModel;
-//
-//  factory BaseViewModel() {
-//    _baseViewModel ??= BaseViewModel._();
-//    return _baseViewModel;
-//  }
+  // BuildContext
+  BuildContext _context;
+  BuildContext get context => _context;
+  void setContext(BuildContext context) {
+    _context = context;
+  }
+
+  // Appが初回起動かどうか（main関数を通るかどうか）
+  static bool _isFirstApp = true;
+  bool get isFirstApp => _isFirstApp;
+  void setIsFirstAppFlag(bool flag) {
+    _isFirstApp = flag;
+  }
 
   //AppBarTitle
   String appBarTitle = 'Home';
@@ -31,6 +35,13 @@ class BaseViewModel extends ChangeNotifierModel{
 
   //BaseViewフェードインフラグ
   bool isStartFadeIn = false;
+
+  // OSのダークモードかどうかのフラグ
+  static bool _isOSDarkMode = false;
+  bool get isOSDarkMode => _isOSDarkMode;
+  void setIsOsDarkModeFlag(bool flag) {
+    _isOSDarkMode = flag;
+  }
 
   // DarkModeかどうか
   static bool _isCurrentDarkMode = false;
@@ -132,6 +143,34 @@ class BaseViewModel extends ChangeNotifierModel{
   ///get PageName
   PageName getPageName() {
     return _pageName;
+  }
+
+  // OSのダークモード設定判定
+  void setOSDarkTheme({bool notNotify = true}) {
+    final Brightness newPlatformBrightness = MediaQuery.platformBrightnessOf(context);
+    // 新規取得テーマカラー判定用フラグ
+    bool newIsDarkMode;
+    if (newPlatformBrightness == Brightness.dark) {
+      newIsDarkMode = true;
+    } else {
+      newIsDarkMode = false;
+    }
+    // 新旧で変更があった時のみ更新
+    if (isFirstApp || _isOSDarkMode != newIsDarkMode) {
+      _isOSDarkMode = newIsDarkMode;
+      if (!notNotify) {
+        notifyListeners();
+      }
+    }
+//    _isOSDarkMode = newIsDarkMode;
+//    if (!notNotify) {
+//      notifyListeners();
+//    }
+  }
+
+  /// Notify用
+  void notify() {
+    notifyListeners();
   }
 
 }

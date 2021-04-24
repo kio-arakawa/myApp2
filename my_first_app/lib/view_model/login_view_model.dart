@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:my_first_app/model/user_info_data.dart';
-import 'package:my_first_app/view_model/change_notifier_model.dart';
+import 'package:my_first_app/model/my_shared_pref.dart';
+import 'package:my_first_app/view_model/base_view_model.dart';
 
-class LoginViewModel extends ChangeNotifierModel {
+class LoginViewModel extends BaseViewModel {
 
-  UserInfoData _userInfoData;
+  MySharedPref _mySharedPref;
 
   //初回登録かどうかのフラグ
   bool _isRegisterAccount = true;
@@ -40,7 +40,7 @@ class LoginViewModel extends ChangeNotifierModel {
 
   ///Constructor
   LoginViewModel._() {
-   _userInfoData = UserInfoData();
+    _mySharedPref = MySharedPref();
   }
   static LoginViewModel _loginViewModel;
   factory LoginViewModel() {
@@ -90,11 +90,11 @@ class LoginViewModel extends ChangeNotifierModel {
   Future<bool> checkMatchAccount(String name, String pass) async {
     // ユーザー名とパスワードがnullでない時
     if ( (name != null) && (pass != null) ) {
-      if (name != await _userInfoData.getUserName()) {
+      if (name != await _mySharedPref.getUserName()) {
         debugPrint('ユーザー名またはパスワードが異なっています。');
         return false;
       }
-      if (pass != await _userInfoData.getUserPass()) {
+      if (pass != await _mySharedPref.getUserPass()) {
         debugPrint('パスワード名またはパスワードが異なっています。');
         return false;
       }
@@ -107,14 +107,17 @@ class LoginViewModel extends ChangeNotifierModel {
   }
 
   // アカウント作成
-  Future<void> registerAccount(String name, String pass) async {
-    await _userInfoData.setUserName(name);
-    await _userInfoData.setUserPass(pass);
+  Future<bool> registerAccount(String name, String pass) async {
+    // 正常に登録できたかのフラグリスト
+    List<bool> futureList = [];
+    futureList.add(await _mySharedPref.setUserName(name));
+    futureList.add(await _mySharedPref.setUserPass(pass));
+    return futureList.contains(false);
   }
 
   // アカウント削除
   Future<bool> deleteAccount() async {
-    return await _userInfoData.deleteAccount();
+    return await _mySharedPref.deleteAccount();
   }
 
 }

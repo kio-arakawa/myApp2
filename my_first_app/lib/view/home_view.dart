@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:my_first_app/view/lifecycle_manager.dart';
+import 'package:my_first_app/view_model/setting_view_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:my_first_app/dimens/dimens_manager.dart';
@@ -10,8 +11,11 @@ import 'package:my_first_app/constants.dart';
 
 class HomeView extends StatelessWidget {
 
+  final LifecycleCallback _lifecycleCallback = LifecycleCallback();
+  final SettingViewModel _settingViewModel;
+
   ///Constructor
-  HomeView({Key key}) : super(key: key);
+  HomeView(this._settingViewModel);
 
   void _initializer(BuildContext context) {
     DimensManager.dimensHomeSize.initialDimens<HomeView>(context);
@@ -29,16 +33,6 @@ class HomeView extends StatelessWidget {
       child: SafeArea(
         child: Container(
           height: DimensManager.dimensHomeSize.fullHeight,
-//          decoration: BoxDecoration(
-//            gradient: LinearGradient(
-//              begin: FractionalOffset.topCenter,
-//              end: FractionalOffset.bottomCenter,
-//              colors: [
-//                Colors.white.withOpacity(0.5),
-//                Colors.grey.withOpacity(0.5),
-//              ],
-//            ),
-//          ),
           child: SingleChildScrollView(
             child: Center(
               child: Column(
@@ -47,6 +41,8 @@ class HomeView extends StatelessWidget {
                   ///日付表示
                   Consumer<HomeViewModel>(
                     builder: (_,model,__) {
+                      // contextをセット
+                      model.setContext(context);
                       return CustomCardWidget(
                         isCard: false,
                         cardColor: Colors.white,
@@ -76,7 +72,15 @@ class HomeView extends StatelessWidget {
                     child: CupertinoContextMenu(
                       actions: [
                         CupertinoContextMenuAction(
-                          child: Center(child: Text('設定する', style: TextStyle(fontSize: 15))),
+                          child: Center(
+                            child: Text(
+                              '設定',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           onPressed: () {
                             // MenuActionSheetをpop
                             Navigator.pop(context);
@@ -85,7 +89,7 @@ class HomeView extends StatelessWidget {
                           }
                         ),
                         CupertinoContextMenuAction(
-                            child: Center(child: Text('閉じる', style: TextStyle(fontSize: 15))),
+                            child: Center(child: Text('戻る', style: TextStyle(fontSize: 15))),
                           onPressed: () => Navigator.pop(context),
                         )
                       ],

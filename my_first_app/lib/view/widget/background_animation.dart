@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-
 import 'package:my_first_app/model/animation_model.dart';
-
-import '../../model/animation_model.dart';
-import '../../model/animation_model.dart';
 
 class BackGroundAnimation extends StatefulWidget {
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/constants.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
 import 'package:my_first_app/model/moor_db.dart';
 import 'package:provider/provider.dart';
@@ -39,24 +40,14 @@ class DiaryView extends StatelessWidget {
       //横画面の時用にSafeAreaでラップ
       child: SafeArea(
         child: Container(
-//          height: DimensManager.dimensDiarySize.fullHeight,
-//          decoration: BoxDecoration(
-//            gradient: LinearGradient(
-//              begin: FractionalOffset.topCenter,
-//              end: FractionalOffset.bottomCenter,
-//              colors: [
-//                Colors.white.withOpacity(1),
-//                Colors.grey.withOpacity(1),
-//              ],
-//            ),
-//          ),
           child: Consumer<ChatViewModel>(
             builder: (_,model,__) {
+              // contextをセット
+              model.setContext(context);
               return Container(
                 // 高さを指定しないと、タイムラインが空白の時テキストボックス＆送信ボタンWidgetができる限り小さくなろうとする
                 // すなわち、Positionedでbottomを0指定していても無効化される
                 height: DimensManager.dimensDiarySize.viewBaseHeight,
-//              width: DimensManager.dimensDiarySize.viewBaseWidth,
                 margin: EdgeInsets.only(top: DimensManager.dimensDiarySize.diaryListTopMargin),
                 child: StreamBuilder(
                   initialData: DataBaseState.STOP,
@@ -75,10 +66,20 @@ class DiaryView extends StatelessWidget {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   //BottomNavigationロック
 //                              _baseViewModel.setState(DataBaseState.CONNECTING);
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                                    ),
+                                  // Info: 小さなぐるぐるを出さないように、1s間delayする
+                                  return FutureBuilder(
+                                    future: Future.delayed(Duration(milliseconds: Constants.circleProgressIndicatorBuildWaitTime)),
+                                    builder: (_, delayTime) {
+                                      if (delayTime.connectionState == ConnectionState.done) {
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                                          ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
                                   );
                                 } else {
                                   if (snapshot.hasData) {
@@ -99,10 +100,20 @@ class DiaryView extends StatelessWidget {
                                   }
                                   //BottomNavigationロック
 //                              _baseViewModel.setState(DataBaseState.CONNECTING);
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                                    ),
+                                  // Info: 小さなぐるぐるを出さないように、1s間delayする
+                                  return FutureBuilder(
+                                    future: Future.delayed(Duration(milliseconds: Constants.circleProgressIndicatorBuildWaitTime)),
+                                    builder: (_, delayTime) {
+                                      if (delayTime.connectionState == ConnectionState.done) {
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                                          ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
                                   );
                                 }
                               },
