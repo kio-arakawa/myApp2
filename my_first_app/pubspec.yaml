@@ -49,9 +49,13 @@ dependencies:
 
   flutter_launcher_icons: ^0.8.1
 
+  flutter_hooks: ^0.16.0
+
+  hooks_riverpod: ^0.14.0+2
+
 dev_dependencies:
 
-  moor_generator: ^3.4.1
+#  moor_generator: ^3.4.1
 
   build_runner: ^1.11.0
 
