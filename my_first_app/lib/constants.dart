@@ -27,4 +27,8 @@ class Constants {
   static final String profileUserName = 'profile_user_name';
   // Key: DarkModeFlagName
   static final String darkModeFlagName = 'dark_mode_flag';
+  // Key: InitAppLaunce
+  static final String initAppLaunch = 'init_app_launch';
+  // Key: Activity
+  static final String activityCount = 'activity_count';
 }

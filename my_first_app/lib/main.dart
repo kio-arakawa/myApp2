@@ -14,19 +14,50 @@ import 'package:my_first_app/view/home_view.dart';
 void main() async {
   // Info: main関数で非同期処理をする時のおまじない
   WidgetsFlutterBinding.ensureInitialized();
-  // SharedPrefからテーマカラーを非同期で取得 → 完了後にrunApp()
-  await MySharedPref().getDarkModeFlag().then((isDarkMode) {
-    // フラグがnullなら同期クラスにセットしない
-    if (isDarkMode != null) {
-      // 同期クラスに保存
-      SyncDataBaseModel().setDarkModeFlagIntoSync(isDarkMode);
-    }
+//  // SharedPrefからテーマカラーを非同期で取得 → 完了後にrunApp()
+//  await MySharedPref().getDarkModeFlag().then((isDarkMode) {
+//    // フラグがnullなら同期クラスにセットしない
+//    if (isDarkMode != null) {
+//      // 同期クラスに保存
+//      SyncDataBaseModel().setDarkModeFlagIntoSync(isDarkMode);
+//    }
+//    runApp(
+//      ProviderScope(
+//        child: MyApp(isDarkMode ??= false),
+//      ),
+//    );
+//  });
+  await multiInitFutureFunc().then((isDarkMode) {
     runApp(
       ProviderScope(
         child: MyApp(isDarkMode ??= false),
       ),
     );
   });
+}
+
+Future<bool> multiInitFutureFunc() async {
+  bool isDarkModeFlag;
+  await Future.wait([
+    // ダークモードFlagの読み込み
+    MySharedPref().getDarkModeFlag().then((isDarkMode) {
+      // フラグがnullなら同期クラスにセットしない
+      if (isDarkMode != null) {
+        // 同期クラスに保存
+        SyncDataBaseModel().setDarkModeFlagIntoSync(isDarkMode);
+        isDarkModeFlag = isDarkMode;
+      }
+    }),
+    // アプリ初回起動Flagの読み込み
+    MySharedPref().getInitAppLaunce().then((isInitAppLaunch) {
+      // フラグがnullなら同期クラスにセットしない
+      if (isInitAppLaunch != null) {
+        SyncDataBaseModel().setInitAppLaunchFlagIntoSync(isInitAppLaunch);
+      }
+    }),
+
+  ]);
+  return isDarkModeFlag;
 }
 
 class MyApp extends HookWidget {

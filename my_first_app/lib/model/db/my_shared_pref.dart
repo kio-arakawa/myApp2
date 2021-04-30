@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:my_first_app/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,8 +12,10 @@ class MySharedPref {
   MySharedPref._();
   static MySharedPref _mySharedPref;
   factory MySharedPref() {
-    _mySharedPref ??= MySharedPref._();
-    return _mySharedPref;
+    if(_mySharedPref == null) {
+      debugPrint('MySharedPref Instance!');
+    }
+    return _mySharedPref ??= MySharedPref._();
   }
 
   /// -- [BEGIN] GET METHOD -- ///
@@ -42,6 +45,18 @@ class MySharedPref {
   Future<bool> getDarkModeFlag() async {
     return await _getSharedPrefInstance().then((prefs) {
       return prefs.getBool(Constants.darkModeFlagName);
+    });
+  }
+  /// Get InitAppLaunch
+  Future<bool> getInitAppLaunce() async {
+    return await _getSharedPrefInstance().then((prefs) {
+      return prefs.getBool(Constants.initAppLaunch);
+    });
+  }
+  /// Get ActivityCount
+  Future<String> getActivityCount() async {
+    return await _getSharedPrefInstance().then((prefs) {
+      return prefs.getString(Constants.activityCount);
     });
   }
   /// -- [END] GET METHOD -- ///
@@ -133,7 +148,6 @@ class MySharedPref {
   }
   /// Register DarkModeFlag
   Future<bool> setDarkModeFlag(bool isDarkMode) async {
-    bool result;
     String themeName;
     if (isDarkMode) {
       themeName = 'ダークモード';
@@ -161,6 +175,40 @@ class MySharedPref {
         debugPrint('既に$themeNameです');
         return false;
       }
+    });
+  }
+  /// Register InitAppLaunchFlag
+  /// isInitAppLaunch == true : アプリ初回起動状態にする（ユーザー名登録・チュートリアル出す）
+  /// isInitAppLaunch == false : アプリ初回起動状態解除（ユーザー名登録・チュートリアル出さない）
+  Future<bool> setInitAppLaunchFlag(bool isInitAppLaunch) async {
+    // Check Existing UserName
+    return await getInitAppLaunce().then((bool) async {
+      // 今の設定と入力フラグが同じなら何もしない
+      if (bool != isInitAppLaunch) {
+        return await _getSharedPrefInstance().then((prefs) async {
+          // SharedPrefに書き込み処理
+          return await prefs.setBool(Constants.initAppLaunch, isInitAppLaunch).then((value) {
+            // 書き込みに成功
+            if (value) {
+              debugPrint('アプリ初回起動フラグを$isInitAppLaunchに設定完了');
+              // 書き込みに失敗
+            } else {
+              debugPrint('アプリ初回起動フラグを$isInitAppLaunchに設定できませんでした。');
+            }
+            return value;
+          });
+        });
+      } else {
+        debugPrint('既にアプリ初回起動フラグが$isInitAppLaunchです');
+        return false;
+      }
+    });
+  }
+  /// Register ActivityCount
+  /// activityにはjson.encodeを渡す
+  Future<bool> setActivityCount(String activity) async {
+    return await _getSharedPrefInstance().then((prefs) async {
+      return await prefs.setString(Constants.activityCount, activity);
     });
   }
   /// -- [END] SET METHOD -- ///

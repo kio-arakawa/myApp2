@@ -23,22 +23,24 @@ class HistoryView extends HookWidget {
     return WillPopScope(
       onWillPop: () async => true,
       //横画面の時用にSafeAreaでラップ
-      child: SafeArea(
-        child: Consumer(
-          builder: (context, watch, _) {
-            final historyViewModel = watch(historyViewModelProvider);
-            final baseViewModel = watch(baseViewModelProvider);
-            final appThemeModel = watch(appThemeModelProvider);
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              baseViewModel.setState(DataBaseState.STOP);
-            });
-            return Container(
+      child: Consumer(
+        builder: (context, watch, _) {
+          final historyViewModel = watch(historyViewModelProvider);
+          final baseViewModel = watch(baseViewModelProvider);
+          final appThemeModel = watch(appThemeModelProvider);
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            baseViewModel.setState(DataBaseState.STOP);
+          });
+          return SafeArea(
+            child: Container(
+              height: DimensManager.dimensHistoryViewSize.viewBaseHeight,
+              color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.white,
               child: SingleChildScrollView(
                 child: Center(
                   child: Column(
                     children: <Widget>[
                       Text(
-                        'ユーザー名：${historyViewModel.syncDataBaseModel.getUserNameFromSync()}',
+                        'ユーザー名：${historyViewModel.syncDataBaseModelInstance().getUserNameFromSync()}',
                         style: TextStyle(
                           fontSize: 20,
                           color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black
@@ -46,7 +48,7 @@ class HistoryView extends HookWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        'パスワード：${historyViewModel.syncDataBaseModel.getUserPassFromSync()}',
+                        'パスワード：${historyViewModel.syncDataBaseModelInstance().getUserPassFromSync()}',
                         style: TextStyle(
                             fontSize: 20,
                             color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black
@@ -73,9 +75,9 @@ class HistoryView extends HookWidget {
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

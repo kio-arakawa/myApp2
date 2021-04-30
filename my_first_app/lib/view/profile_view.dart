@@ -29,13 +29,14 @@ class ProfileView extends HookWidget {
       child: Consumer(
         builder: (context, watch, _) {
           final profileViewModel = watch(profileViewModelProvider);
+          final appThemeModel = watch(appThemeModelProvider);
           return Scaffold(
             extendBody: true,
             extendBodyBehindAppBar: true,
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(DimensManager.dimensHomeSize.headerHeight),
               child: AppBar(
-                backgroundColor: Colors.blueGrey.withOpacity(0.7),
+                backgroundColor: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.white.withOpacity(0.7),
                 leading: InkWell(
                   onTap: () => Navigator.pushReplacementNamed(context, '/base'),
                   child: Container(
@@ -50,7 +51,12 @@ class ProfileView extends HookWidget {
                   ),
                 ),
                 centerTitle: true,
-                title: Text('Profile'),
+                title: Text(
+                  'Profile',
+                  style: TextStyle(
+                    color: appThemeModel.isAppThemeDarkNow() ? Colors.white : Colors.black,
+                  ),
+                ),
               ),
             ),
             body: WillPopScope(
@@ -102,7 +108,7 @@ class ProfileView extends HookWidget {
                             width: double.infinity,
                             child: Center(
                               child: Text(
-                                '${profileViewModel.syncDataBaseModel.getUserNameFromSync()}',
+                                '${profileViewModel.syncDataBaseModelInstance().getProfileUserNameFromSync()}',
                                 style: TextStyle(
                                   fontSize: 25,
                                   color: Colors.white,

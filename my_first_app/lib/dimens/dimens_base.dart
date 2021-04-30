@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-class DimensBase {
+class DimensBase extends ChangeNotifier{
   // Platform
   bool _ios = Platform.isIOS;
   bool get isPlatformIos => _ios;
@@ -15,8 +15,10 @@ class DimensBase {
 
   double fullHeight = 0;
   double fullWidth = 0;
-  static double statusBarHeight = 0;
-  static double homeIndicatorHeight = 0;
+  static double staticStatusBarHeight = 0;
+  double statusBarHeight = 0;
+  static double staticHomeIndicatorHeight = 0;
+  double homeIndicatorHeight = 0;
   double fullHeightSafeArea = 0;
   double fullWidthSafeArea = 0;
   double headerHeight = 0;
@@ -49,8 +51,10 @@ class DimensBase {
     //       の値を取ると、描画できない値として取得してしまうので、再代入しないようにする必要がある
     //       → すなわち、MediaQuery.of(context).padding.[top][bottom]メソッドは、
     //       そのViewからは描画できない範囲の値を返すようになっていると考えられる
-    if ( (statusBarHeight == 0 && homeIndicatorHeight == 0)) {
+    if ( (staticStatusBarHeight == 0 && staticHomeIndicatorHeight == 0)) {
+      staticStatusBarHeight = newStatusBarHeight;
       statusBarHeight = newStatusBarHeight;
+      staticHomeIndicatorHeight = newHomeIndicatorHeight;
       homeIndicatorHeight = newHomeIndicatorHeight;
       _isNeedReCalcRatio = true;
     }

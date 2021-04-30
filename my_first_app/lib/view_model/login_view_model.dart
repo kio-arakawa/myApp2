@@ -86,11 +86,11 @@ class LoginViewModel extends BaseViewModel {
   Future<bool> checkMatchAccount(String name, String pass) async {
     // ユーザー名とパスワードがnullでない時
     if ( (name != null) && (pass != null) ) {
-      if (name != await mySharedPref.getUserName()) {
+      if (name != await mySharedPrefInstance().getUserName()) {
         debugPrint('ユーザー名またはパスワードが異なっています。');
         return false;
       }
-      if (pass != await mySharedPref.getUserPass()) {
+      if (pass != await mySharedPrefInstance().getUserPass()) {
         debugPrint('パスワード名またはパスワードが異なっています。');
         return false;
       }
@@ -106,14 +106,14 @@ class LoginViewModel extends BaseViewModel {
   Future<bool> registerAccount(String name, String pass) async {
     // 正常に登録できたかのフラグリスト
     List<bool> futureList = [];
-    futureList.add(await mySharedPref.setUserName(name));
-    futureList.add(await mySharedPref.setUserPass(pass));
+    futureList.add(await mySharedPrefInstance().setUserName(name));
+    futureList.add(await mySharedPrefInstance().setUserPass(pass));
     return futureList.contains(false);
   }
 
   // アカウント削除
   Future<bool> deleteAccount() async {
-    return await mySharedPref.deleteAccount();
+    return await mySharedPrefInstance().deleteAccount();
   }
 
 }

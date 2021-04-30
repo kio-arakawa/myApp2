@@ -22,18 +22,20 @@ class SettingView extends HookWidget {
     debugPrint('settingViewBuild');
     _initializer(context);
     //横画面の時用にSafeAreaでラップ
-    return SafeArea(
-      child: Container(
-        child: SingleChildScrollView(
-          child: Consumer(
-            builder: (context, watch, _) {
-              final settingViewModel = watch(settingViewModelProvider);
-              final baseViewModel = watch(baseViewModelProvider);
-              final appThemeModel = watch(appThemeModelProvider);
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                baseViewModel.setState(DataBaseState.STOP);
-              });
-              return Column(
+    return Consumer(
+      builder: (context, watch, _) {
+        final settingViewModel = watch(settingViewModelProvider);
+        final baseViewModel = watch(baseViewModelProvider);
+        final appThemeModel = watch(appThemeModelProvider);
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          baseViewModel.setState(DataBaseState.STOP);
+        });
+        return SafeArea(
+          child: Container(
+            height: DimensManager.dimensSettingViewSize.viewBaseHeight,
+            color: appThemeModel.isAppThemeDarkNow() ? Colors.black : Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
                 children: <Widget>[
                   /// Developer Options
                   _createSectionContainer(
@@ -139,11 +141,11 @@ class SettingView extends HookWidget {
                     ]
                   ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -198,7 +200,7 @@ class SettingView extends HookWidget {
 //          decoration: TextDecoration.underline,
 //          decorationStyle: TextDecorationStyle.dotted,
           ),
-        )
+        ),
     );
   }
 

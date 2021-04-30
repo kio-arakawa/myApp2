@@ -26,8 +26,8 @@ class LoginView extends HookWidget {
     // contextをセット
     _loginViewModel.setContext(context);
     // ユーザー名・パスワードをSyncModelにセット
-    await _loginViewModel.syncDataBaseModel.setUserNameIntoSync(_loginViewModel.mySharedPref.getUserName());
-    await _loginViewModel.syncDataBaseModel.setUserPassIntoSync(_loginViewModel.mySharedPref.getUserPass());
+    await _loginViewModel.syncDataBaseModelInstance().setUserNameIntoSync(_loginViewModel.mySharedPrefInstance().getUserName());
+    await _loginViewModel.syncDataBaseModelInstance().setUserPassIntoSync(_loginViewModel.mySharedPrefInstance().getUserPass());
     // CallBack処理
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // BackGroundアニメーション開始
@@ -35,8 +35,8 @@ class LoginView extends HookWidget {
       // ログイン情報チェック
       _loginViewModel.checkDoneAll();
       // ユーザー名とパスワードが既に登録済みかチェック
-      if (_loginViewModel.syncDataBaseModel.getUserNameFromSync() != null
-          || _loginViewModel.syncDataBaseModel.getUserPassFromSync() != null) {
+      if (_loginViewModel.syncDataBaseModelInstance().getUserNameFromSync() != null
+          || _loginViewModel.syncDataBaseModelInstance().getUserPassFromSync() != null) {
         _loginViewModel.setIsFirstLogin(false);
       }
       // OSのテーマカラーをチェック
@@ -293,8 +293,8 @@ class LoginView extends HookWidget {
                     // 登録済み情報をリセット
                     _loginViewModel.setIsFirstLogin(true);
                     // ユーザー名とパスワードのキャッシュ情報をクリア
-                    _loginViewModel.syncDataBaseModel.deleteUserNameFromSync();
-                    _loginViewModel.syncDataBaseModel.deleteUserPassFromSync();
+                    _loginViewModel.syncDataBaseModelInstance().deleteUserNameFromSync();
+                    _loginViewModel.syncDataBaseModelInstance().deleteUserPassFromSync();
                     // 登録用フィールドをクリア
                     _nameController.clear();
                     _passController.clear();
@@ -403,8 +403,8 @@ class LoginView extends HookWidget {
           // 照合失敗
           } else {
             // Todo: (Debugのみ)登録情報をコンソールに表示
-            debugPrint('UserName:${_loginViewModel.syncDataBaseModel.getUserNameFromSync()}');
-            debugPrint('UserPass:${_loginViewModel.syncDataBaseModel.getUserPassFromSync()}');
+            debugPrint('UserName:${_loginViewModel.syncDataBaseModelInstance().getUserNameFromSync()}');
+            debugPrint('UserPass:${_loginViewModel.syncDataBaseModelInstance().getUserPassFromSync()}');
           }
       });
     }
@@ -419,8 +419,8 @@ class LoginView extends HookWidget {
           if (value) {
             // ダイアログ削除
             Navigator.pop(context);
-            debugPrint('UserName:${_loginViewModel.syncDataBaseModel.getUserNameFromSync()}');
-            debugPrint('UserPass:${_loginViewModel.syncDataBaseModel.getUserPassFromSync()}');
+            debugPrint('UserName:${_loginViewModel.syncDataBaseModelInstance().getUserNameFromSync()}');
+            debugPrint('UserPass:${_loginViewModel.syncDataBaseModelInstance().getUserPassFromSync()}');
           // 登録に成功した時
           } else {
             // 登録済みであることをセット

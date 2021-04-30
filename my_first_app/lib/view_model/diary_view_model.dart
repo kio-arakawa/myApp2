@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:my_first_app/dimens/dimens_diary.dart';
+import 'package:my_first_app/dimens/dimens_manager.dart';
 
 import 'package:my_first_app/my_enum/data_base_state.dart';
 import 'package:my_first_app/view_model/base_view_model.dart';
@@ -99,6 +101,38 @@ class ChatViewModel extends BaseViewModel {
       controller.clear();
       ///変更通知
       notifyListeners();
+      changeTextFormToMaxLines1();
+    }
+  }
+
+  /// テキストフォームフィールドの改行チェック
+  void checkTextFormMaxLine3(String text, double fontSize, double maxTextBoxWidth, double letterSpacing, DimensDiary dimensDiary) {
+    double inputTextWidthResult = calcInputTextWidth(text, fontSize, maxTextBoxWidth, letterSpacing);
+    int maxLineResult = 1;
+    if(inputTextWidthResult > maxTextBoxWidth) {
+      // 小数点第一位を切り上げ
+      maxLineResult = (inputTextWidthResult / maxTextBoxWidth).ceil();
+    }
+    if(maxLineResult < 4) {
+      // Dimensクラスに処理を渡す
+      DimensManager.dimensDiarySize.textFormSizeChange(maxLineResult);
+    }
+  }
+
+  /// テキストボックスを閉じる時 & 登録ボタン押下時
+  void changeTextFormToMaxLines1() {
+    _initFocus = true;
+    DimensManager.dimensDiarySize.textFormSizeChange(1);
+  }
+
+  /// テキストボックスにフォーカスが当たるのが初回かどうか
+  bool _initFocus = true;
+  /// テキストボックスにフォーカスが当たった時
+  void initFocusTextFormField(String text, double fontSize, double maxTextBoxWidth, double letterSpacing, DimensDiary dimensDiary) {
+    if(_initFocus) {
+      _initFocus = false;
+      checkTextFormMaxLine3(text, fontSize, maxTextBoxWidth, letterSpacing, dimensDiary
+      );
     }
   }
 

@@ -1,7 +1,9 @@
+import 'package:my_first_app/dimens/dimens_base_view.dart';
 import 'package:my_first_app/dimens/dimens_history_view.dart';
 import 'package:my_first_app/dimens/dimens_home.dart';
 import 'package:my_first_app/dimens/dimens_profile_view.dart';
 import 'package:my_first_app/dimens/dimens_setting_view.dart';
+import 'package:my_first_app/view/base_view.dart';
 import 'package:my_first_app/view/diary_view.dart';
 import 'package:my_first_app/view/history_view.dart';
 import 'package:my_first_app/view/home_view.dart';
@@ -23,6 +25,10 @@ class DimensManager {
     return _instance ??= DimensManager._();
   }
 
+  /// Dimens Base(View)
+  DimensBaseView _dimensBase;
+  DimensBaseView get dimensBaseInstance => _dimensBase;
+  static DimensBaseView get dimensBaseSize => _instance.dimensBaseInstance;
   ///Dimens Home
   DimensHome _dimensHome;
   DimensHome get dimensHomeInstance => _dimensHome;
@@ -45,6 +51,7 @@ class DimensManager {
   static DimensSettingView get dimensSettingViewSize => _instance.dimensSettingInstance;
 
   void _initialViewDimens() {
+    _dimensBase ??= DimensBaseView();
     _dimensHome ??= DimensHome();
     _dimensDiary ??= DimensDiary();
     _dimensProfileView ??= DimensProfileView();
@@ -54,6 +61,10 @@ class DimensManager {
 
   void initialDimens<T>() {
     switch(T) {
+      case BaseView:
+        _dimensBase ??= DimensBaseView();
+        _dimensBase.calculatorRatio<BaseView>();
+        break;
       case HomeView:
         _dimensHome ??= DimensHome();
         _dimensHome.calculatorRatio<HomeView>();

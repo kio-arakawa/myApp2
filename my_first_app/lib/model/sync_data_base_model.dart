@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// SharedPrefとMoorから取得した非同期情報を同期的に処理するクラス
 
 class SyncDataBaseModel {
@@ -5,7 +7,9 @@ class SyncDataBaseModel {
   SyncDataBaseModel._();
   static SyncDataBaseModel _instance;
   factory SyncDataBaseModel() {
-    print('SyncDataBaseModel Instance!');
+    if(_instance == null) {
+      debugPrint('SyncDataBaseModel Instance!');
+    }
     return _instance ??= SyncDataBaseModel._();
   }
 
@@ -19,6 +23,10 @@ class SyncDataBaseModel {
   static String _sProfileUserName = '';
   // ダークモードかどうかのフラグ
   static bool _isDarkMode = false;
+  // アプリ初回起動かどうかのフラグ
+  static bool _isInitAppLaunch = true;
+  // アクティビティカウンター[年月]
+  static Map<String, int> _activityCounterByYearAndMonth = {};
 
   /// Method
   // -- [Begin]UserNameとUserPass -- //
@@ -53,6 +61,10 @@ class SyncDataBaseModel {
   Future<void> setProfileUserNameIntoSync(Future<String> profileUserName) async {
     _sProfileUserName = await profileUserName;
   }
+  // 同期的にプロフィール名をセット
+  void syncSetProfileUserNameIntoSync(String profileName) {
+    _sProfileUserName = profileName;
+  }
   // プロフィール名取得
   String getProfileUserNameFromSync() {
     return _sProfileUserName;
@@ -73,4 +85,26 @@ class SyncDataBaseModel {
     return _isDarkMode;
   }
   // -- [End]IsDarkMode -- //
+
+  // -- [Begin] InitAppLaunch -- //
+  // DBからフラグをセット
+  void setInitAppLaunchFlagIntoSync(bool isInitAppLaunch) {
+    _isInitAppLaunch = isInitAppLaunch;
+  }
+  // フラグ取得
+  bool getInitAppLaunchFlagFromSync() {
+    return _isInitAppLaunch;
+  }
+
+  // -- [Begin]Activity Counter -- //
+  // DBからカウントセット
+  void setActivityByYearAndMonthIntoSync(String key, int count) {
+    _activityCounterByYearAndMonth[key] = count;
+  }
+  // カウント取得
+  Map<String, int> getActivityByYearAndMonthFromSync() {
+    return _activityCounterByYearAndMonth;
+  }
+  // -- [End]Activity Counter -- //
+
 }

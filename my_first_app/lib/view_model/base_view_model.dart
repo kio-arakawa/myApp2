@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:my_first_app/constants.dart';
+import 'package:my_first_app/model/activity_manager.dart';
 import 'package:my_first_app/model/db/my_shared_pref.dart';
 import 'package:my_first_app/model/sync_data_base_model.dart';
 import 'package:my_first_app/my_enum/data_base_state.dart';
@@ -10,10 +12,61 @@ import 'package:my_first_app/view_model/change_notifier_model.dart';
 
 class BaseViewModel extends ChangeNotifierModel {
 
+  BaseViewModel() {
+    _initViewModel();
+  }
+
+  // BaseViewを表示したかどうか
+  bool isInitBaseViewBuild = true;
+  // アクティビティセット・更新
+  void setActivity() async {
+    final String nowYear = activityManagerInstance().getTimeStamp(type: TimeStampType.STRING_YEAR);
+    final String nowMonth = activityManagerInstance().getTimeStamp(type: TimeStampType.STRING_MONTH);
+    final String jsonKey = '$nowYear年$nowMonth月';
+    String newActivityJson;
+    await mySharedPrefInstance().setActivityCount(
+      newActivityJson = activityManagerInstance().getUpdateActivityCountMoldJson(
+        await mySharedPrefInstance().getActivityCount(),
+      ),
+    ).then((bool) {
+      if(bool) {
+        // 同期クラスにセット
+        final decodeJson = activityManagerInstance().decodeStringJson(newActivityJson);
+        final int count = decodeJson[jsonKey] as int;
+        syncDataBaseModelInstance().setActivityByYearAndMonthIntoSync(
+          // key
+          jsonKey,
+          count,
+        );
+        debugPrint('アクティビティ【Key:$jsonKey, count:$count】');
+      }
+    });
+  }
+
+  void _initViewModel() {
+    // アプリ初回起動かどうかをセット
+    initAppLaunch = syncDataBaseModelInstance().getInitAppLaunchFlagFromSync();
+  }
+
   Widget cacheWidget;
 
-  MySharedPref mySharedPref = MySharedPref();
-  SyncDataBaseModel syncDataBaseModel = SyncDataBaseModel();
+  // SharedPrefのfactory
+  static MySharedPref _mySharedPref;
+  MySharedPref mySharedPrefInstance() {
+    return _mySharedPref ??= MySharedPref();
+  }
+
+  // SyncDataBaseModelのfactory
+  static SyncDataBaseModel _syncDataBaseModel;
+  SyncDataBaseModel syncDataBaseModelInstance() {
+    return _syncDataBaseModel ??= SyncDataBaseModel();
+  }
+
+  // ActivityManagerのfactory
+  static ActivityManager _activityManager;
+  ActivityManager activityManagerInstance() {
+    return _activityManager ??= ActivityManager();
+  }
 
   // BuildContext
   BuildContext _context;
@@ -65,26 +118,28 @@ class BaseViewModel extends ChangeNotifierModel {
 
   ///BottomNavigationBarでタップされたindexを元にAppBarのタイトル変更するAPI
   void onItemTapped(int index) {
-    setState(DataBaseState.CONNECTING);
-    selectedIndex = index;
-    _setAppBarTitle(index);
-    switch(index) {
-      case 0:
-        _setPageName(PageName.HOME);
-        break;
-      case 1:
-        _setPageName(PageName.CHAT);
-        break;
-      case 2:
-        _setPageName(PageName.HISTORY);
-        break;
-      case 3:
-        _setPageName(PageName.SETTING);
-        break;
-      default:
-        _setPageName(PageName.HOME);
+    if(selectedIndex != index) {
+      setState(DataBaseState.CONNECTING);
+      selectedIndex = index;
+      _setAppBarTitle(index);
+      switch(index) {
+        case 0:
+          _setPageName(PageName.HOME);
+          break;
+        case 1:
+          _setPageName(PageName.CHAT);
+          break;
+        case 2:
+          _setPageName(PageName.HISTORY);
+          break;
+        case 3:
+          _setPageName(PageName.SETTING);
+          break;
+        default:
+          _setPageName(PageName.HOME);
+      }
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   ///AppBarのタイトルを変更するAPI
@@ -171,15 +226,43 @@ class BaseViewModel extends ChangeNotifierModel {
         notifyListeners();
       }
     }
-//    _isOSDarkMode = newIsDarkMode;
-//    if (!notNotify) {
-//      notifyListeners();
-//    }
   }
 
   /// Notify用
   void notify() {
     notifyListeners();
+  }
+
+  /// 入力したテキストの合計widthを取得
+  double calcInputTextWidth(String text, double fontSize, double maxWidth, double letterSpacing) {
+    var renderParagraph = RenderParagraph(
+      TextSpan(
+        text: text,
+        style: TextStyle(
+          fontSize: fontSize,
+          letterSpacing: letterSpacing,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(BoxConstraints(maxWidth: maxWidth));
+
+    double result = renderParagraph.getMinIntrinsicWidth(fontSize);
+    debugPrint('InputTextWidth:$result');
+    return result;
+  }
+
+  // アプリが初回起動かどうか
+  bool initAppLaunch = true;
+
+  /// チュートリアル閉じるボタン押下時
+  void onTapCloseTutorialButton() async {
+    await mySharedPrefInstance().setInitAppLaunchFlag(false).then((bool) {
+      if(bool) {
+        syncDataBaseModelInstance().setInitAppLaunchFlagIntoSync(false);
+        initAppLaunch = false;
+        notifyListeners();
+      }
+    });
   }
 
 }
