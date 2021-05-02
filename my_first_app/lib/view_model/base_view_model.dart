@@ -16,10 +16,10 @@ class BaseViewModel extends ChangeNotifierModel {
     _initViewModel();
   }
 
-  // BaseViewを表示したかどうか
-  bool isInitBaseViewBuild = true;
+  // viewを表示したかどうか
+  bool isInitViewBuild = true;
   // アクティビティセット・更新
-  void setActivity() async {
+  Future<void> setActivity() async {
     final String nowYear = activityManagerInstance().getTimeStamp(type: TimeStampType.STRING_YEAR);
     final String nowMonth = activityManagerInstance().getTimeStamp(type: TimeStampType.STRING_MONTH);
     final String jsonKey = '$nowYear年$nowMonth月';
@@ -256,6 +256,7 @@ class BaseViewModel extends ChangeNotifierModel {
 
   /// チュートリアル閉じるボタン押下時
   void onTapCloseTutorialButton() async {
+    // アプリが初回起動では無いフラグをセット
     await mySharedPrefInstance().setInitAppLaunchFlag(false).then((bool) {
       if(bool) {
         syncDataBaseModelInstance().setInitAppLaunchFlagIntoSync(false);

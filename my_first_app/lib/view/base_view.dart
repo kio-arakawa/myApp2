@@ -31,15 +31,15 @@ class BaseView extends HookWidget {
   ];
 
   void _initializer(BuildContext context, BaseViewModel baseViewModel) async {
-    if(baseViewModel.isInitBaseViewBuild) {
+    if(baseViewModel.isInitViewBuild) {
       // Dimensクラス初期処理
       DimensManager.dimensBaseSize.initialDimens<BaseView>(context);
       // ユーザー名・パスワードをSyncModelにセット
       await baseViewModel.syncDataBaseModelInstance().setUserNameIntoSync(baseViewModel.mySharedPrefInstance().getUserName());
       await baseViewModel.syncDataBaseModelInstance().setUserPassIntoSync(baseViewModel.mySharedPrefInstance().getUserPass());
-      baseViewModel.setActivity();
+//      baseViewModel.setActivity();
       // リビルドされても初期化しないようにセット
-      baseViewModel.isInitBaseViewBuild = false;
+      baseViewModel.isInitViewBuild = false;
     }
   }
 

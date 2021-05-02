@@ -16,10 +16,16 @@ class HomeView extends HookWidget {
   HomeView();
 
   void _initializer(BuildContext context, HomeViewModel homeViewModel) {
-    DimensManager.dimensHomeSize.initialDimens<HomeView>(context);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-
-    });
+    if(homeViewModel.isInitViewBuild) {
+      DimensManager.dimensHomeSize.initialDimens<HomeView>(context);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        // アクティビティ更新
+        homeViewModel.setActivity().then((value) {
+          homeViewModel.updateActivityInfo();
+        });
+      });
+      homeViewModel.isInitViewBuild = false;
+    }
   }
 
   @override
@@ -30,6 +36,10 @@ class HomeView extends HookWidget {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       baseViewModel.setState(DataBaseState.STOP);
     });
+    // 'Activity'テキストのグラデーション設定
+    final Shader linearGradient = LinearGradient(
+      colors: <Color>[Color(0xff1A2980), Color(0xff26D0CE)],
+    ).createShader(Rect.fromLTWH(0.0, 0.0, 100.0, 30.0));
     debugPrint('homeViewBuild');
     //初期設定
     _initializer(context, homeViewModel);
@@ -52,7 +62,7 @@ class HomeView extends HookWidget {
                   // Info: Heroアニメーション付き
                   _buildProfileCard(context, homeViewModel),
                   /// アクティビティ
-                  _buildActivityCard(context, homeViewModel),
+                  _buildActivityCard(context, homeViewModel, linearGradient),
                 ],
               ),
             ),
@@ -155,7 +165,7 @@ class HomeView extends HookWidget {
     );
   }
 
-  Widget _buildActivityCard(BuildContext context, HomeViewModel homeViewModel) {
+  Widget _buildActivityCard(BuildContext context, HomeViewModel homeViewModel, Shader linearShader) {
     return CupertinoContextMenu(
       actions: [
         CupertinoContextMenuAction(
@@ -188,9 +198,24 @@ class HomeView extends HookWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Text('Activity'),
-            Text('${homeViewModel.syncDataBaseModelInstance().getActivityByYearAndMonthFromSync().keys}'
-                ':${homeViewModel.syncDataBaseModelInstance().getActivityByYearAndMonthFromSync().values}'),
+            Text(
+             'アクティビティ',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                foreground: Paint()..shader = linearShader,
+              ),
+            ),
+            Text(
+              '${homeViewModel.activityOfYearAndMonthString}'
+                  ' ：${(homeViewModel.activityOfYearAndMonthValue != 0) ? homeViewModel.activityOfYearAndMonthValue : ''}'
+                  '回',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:my_first_app/model/activity_manager.dart';
 
 import 'package:my_first_app/state/state_manager.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
@@ -12,6 +13,8 @@ import 'package:my_first_app/view/base_view.dart';
 import 'package:my_first_app/view/home_view.dart';
 
 void main() async {
+  final MySharedPref mySharedPref = MySharedPref();
+  final SyncDataBaseModel syncDataBaseModel = SyncDataBaseModel();
   // Info: main関数で非同期処理をする時のおまじない
   WidgetsFlutterBinding.ensureInitialized();
 //  // SharedPrefからテーマカラーを非同期で取得 → 完了後にrunApp()
@@ -27,32 +30,43 @@ void main() async {
 //      ),
 //    );
 //  });
-  await multiInitFutureFunc().then((isDarkMode) {
-    runApp(
-      ProviderScope(
-        child: MyApp(isDarkMode ??= false),
-      ),
-    );
-  });
+  await multiInitFutureFunc(mySharedPref, syncDataBaseModel)
+      .then((isDarkMode) {
+        runApp(
+          ProviderScope(
+            child: MyApp(isDarkMode ??= false),
+          ),
+        );
+      });
 }
 
-Future<bool> multiInitFutureFunc() async {
+Future<bool> multiInitFutureFunc(
+    MySharedPref mySharedPref,
+    SyncDataBaseModel syncDataBaseModel,
+  ) async {
   bool isDarkModeFlag;
   await Future.wait([
     // ダークモードFlagの読み込み
-    MySharedPref().getDarkModeFlag().then((isDarkMode) {
+    mySharedPref.getDarkModeFlag().then((isDarkMode) {
       // フラグがnullなら同期クラスにセットしない
       if (isDarkMode != null) {
         // 同期クラスに保存
-        SyncDataBaseModel().setDarkModeFlagIntoSync(isDarkMode);
+        syncDataBaseModel.setDarkModeFlagIntoSync(isDarkMode);
         isDarkModeFlag = isDarkMode;
       }
     }),
     // アプリ初回起動Flagの読み込み
-    MySharedPref().getInitAppLaunce().then((isInitAppLaunch) {
+    mySharedPref.getInitAppLaunce().then((isInitAppLaunch) {
       // フラグがnullなら同期クラスにセットしない
       if (isInitAppLaunch != null) {
-        SyncDataBaseModel().setInitAppLaunchFlagIntoSync(isInitAppLaunch);
+        syncDataBaseModel.setInitAppLaunchFlagIntoSync(isInitAppLaunch);
+      }
+    }),
+    // プロフィール名の読み込み
+    mySharedPref.getProfileUserName().then((profileUserName) {
+      // プロフィール名が未登録ならセットしない
+      if (profileUserName != null) {
+        syncDataBaseModel.syncSetProfileUserNameIntoSync(profileUserName);
       }
     }),
 

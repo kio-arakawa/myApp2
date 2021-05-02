@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 
 class CustomCardWidget extends StatelessWidget {
+  /// Variable
   final bool isCard;
   final double height;
   final double width;
   final Color cardColor;
   final Widget child;
-  CustomCardWidget({this.isCard, this.child, this.cardColor, this.height, this.width});
+
+  /// Constructor
+  CustomCardWidget({
+    this.isCard,
+    this.child,
+    this.cardColor,
+    this.height,
+    this.width,
+  });
 
   @override
   Widget build(BuildContext context) {
   return Container(
+    width: width,
+    height: height,
+    margin: EdgeInsets.all(10.0),
     decoration: isCard
         ? BoxDecoration(
             boxShadow: [
@@ -23,9 +35,6 @@ class CustomCardWidget extends StatelessWidget {
             ],
           )
         : BoxDecoration(),
-    width: width,
-    height: height,
-    margin: EdgeInsets.all(10.0),
     child: isCard
         ? Card(
             color: cardColor,
@@ -35,9 +44,10 @@ class CustomCardWidget extends StatelessWidget {
             ),
           )
         : Padding(
-          padding: EdgeInsets.all(10.0),
-          child: child,
+            padding: EdgeInsets.all(10.0),
+            child: child,
           ),
     );
   }
+
 }
