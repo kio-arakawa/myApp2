@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:my_first_app/model/view_cache_model.dart';
 
 import 'package:my_first_app/state/state_manager.dart';
 import 'package:my_first_app/dimens/dimens_manager.dart';
@@ -37,7 +38,8 @@ class BaseView extends HookWidget {
       // ユーザー名・パスワードをSyncModelにセット
       await baseViewModel.syncDataBaseModelInstance().setUserNameIntoSync(baseViewModel.mySharedPrefInstance().getUserName());
       await baseViewModel.syncDataBaseModelInstance().setUserPassIntoSync(baseViewModel.mySharedPrefInstance().getUserPass());
-//      baseViewModel.setActivity();
+      // ProfileViewをキャッシュ
+//      ViewCacheModel().setProfileViewInstance(context);
       // リビルドされても初期化しないようにセット
       baseViewModel.isInitViewBuild = false;
     }
